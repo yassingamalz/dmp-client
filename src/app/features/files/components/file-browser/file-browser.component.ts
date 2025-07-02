@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-file-browser',
-  standalone: true,
-  imports: [],
+  standalone: false,
   templateUrl: './file-browser.component.html',
   styleUrl: './file-browser.component.scss'
 })

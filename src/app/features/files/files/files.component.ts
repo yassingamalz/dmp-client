@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-files',
-  standalone: true,
-  imports: [],
+  standalone: false,
   templateUrl: './files.component.html',
   styleUrl: './files.component.scss'
 })
