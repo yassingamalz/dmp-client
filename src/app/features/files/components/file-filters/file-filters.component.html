@@ -1,1 +1,28 @@
-<p>file-filters works!</p>
+<div class="filter-bar" [formGroup]="filterForm">
+  <div class="filter-group">
+    <label class="form-label">Year</label>
+    <select class="filter-select" formControlName="year">
+      <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label class="form-label">Month</label>
+    <select class="filter-select" formControlName="month">
+      <option *ngFor="let month of months" [value]="month.value">{{ month.label }}</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label class="form-label">Order</label>
+    <input 
+      type="text" 
+      class="filter-select" 
+      placeholder="Filter by order" 
+      formControlName="order">
+  </div>
+
+  <button class="btn btn-secondary" (click)="onRefresh()">
+    <i class="bi bi-arrow-clockwise"></i>
+    Refresh
+  </button>

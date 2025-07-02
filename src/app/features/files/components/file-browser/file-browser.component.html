@@ -1,1 +1,33 @@
-<p>file-browser works!</p>
+<div class="file-grid">
+  <div 
+    *ngFor="let file of files" 
+    class="file-card" 
+    (click)="viewFile(file)">
+    <div class="file-card-header">
+      <div>
+        <div class="file-card-title">{{ getDisplayName(file.name) }}</div>
+        <div class="file-card-meta">
+          {{ formatFileSize(file.size) }} • {{ formatDate(file.date) }}
+        </div>
+        <div class="file-card-meta">
+          Order: {{ file.order }} • Phase: {{ file.phase }} • Progressive: {{ file.progressive }}
+        </div>
+      </div>
+      <div class="file-card-actions">
+        <button 
+          class="btn-icon" 
+          (click)="downloadFile($event, file)" 
+          title="Download">
+          <i class="bi bi-download"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div 
+    *ngIf="!files || files.length === 0" 
+    class="empty-state">
+    <i class="bi bi-inbox"></i>
+    No files found for the selected filters
+  </div>
+</div>

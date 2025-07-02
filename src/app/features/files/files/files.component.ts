@@ -43,7 +43,7 @@ import { ApiService } from '../../../core/services/api.service';
 export class FilesComponent implements OnInit {
   filterForm: FormGroup;
   allFiles$: Observable<UploadedFile[]>;
-  filteredFiles$: Observable<UploadedFile[]>;
+  filteredFiles$: Observable<UploadedFile[]> | undefined;
 
   constructor(
     private fb: FormBuilder,
