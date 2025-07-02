@@ -1,1 +1,36 @@
-<p>autocomplete-input works!</p>
+<div class="input-wrapper">
+  <input 
+    type="text"
+    class="form-input"
+    [class.loading]="loading"
+    [placeholder]="placeholder"
+    [formControl]="control"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    autocomplete="off">
+  
+  <button 
+    *ngIf="actionIcon"
+    type="button" 
+    class="input-action-btn" 
+    (click)="onActionClick()" 
+    [title]="actionTooltip">
+    <i [class]="'bi ' + actionIcon"></i>
+  </button>
+
+  <div 
+    class="autocomplete-dropdown" 
+    [style.display]="showDropdown ? 'block' : 'none'">
+    <div 
+      *ngFor="let suggestion of suggestions"
+      class="autocomplete-item" 
+      (click)="selectSuggestion(suggestion)">
+      <div>
+        <div class="autocomplete-main">{{ suggestion.label }}</div>
+        <div class="autocomplete-meta" *ngIf="suggestion.meta">{{ suggestion.meta }}</div>
+      </div>
+      <span class="suggestion-badge" *ngIf="suggestion.badge">{{ suggestion.badge }}</span>
+    </div>
+  </div>
+</div>
+

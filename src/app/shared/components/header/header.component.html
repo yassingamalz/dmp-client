@@ -1,1 +1,41 @@
-<p>header works!</p>
+<header class="header">
+  <div class="header-left">
+    <h1>DMP File Exporter</h1>
+    <span class="version-badge">v3.2.1</span>
+  </div>
+  <div class="header-info">
+    <div class="info-item">
+      <span class="info-label">Machine</span>
+      <span class="info-value">{{ machineInfo.id }} ({{ machineInfo.name }})</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Status</span>
+      <span class="info-value">
+        <span class="status-indicator">
+          <span class="status-dot"></span>
+          {{ machineInfo.status }}
+        </span>
+      </span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button 
+      class="nav-btn" 
+      [class.active]="currentRoute === '/export'"
+      (click)="navigateTo('/export')">
+      <i class="bi bi-upload"></i>
+      Export
+    </button>
+    <button 
+      class="nav-btn" 
+      [class.active]="currentRoute === '/files'"
+      (click)="navigateTo('/files')">
+      <i class="bi bi-files"></i>
+      Files
+    </button>
+    <button class="theme-toggle" (click)="toggleTheme()" title="Toggle theme">
+      <i [class]="(currentTheme$ | async) === 'light' ? 'bi bi-moon-fill' : 'bi bi-sun-fill'"></i>
+    </button>
+  </div>
+</header>
+

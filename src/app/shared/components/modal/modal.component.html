@@ -1,1 +1,24 @@
-<p>modal works!</p>
+<div 
+  class="modal-overlay" 
+  [class.show]="isOpen$ | async"
+  (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()" *ngIf="config$ | async as config">
+    <div class="modal-header">
+      <div class="card-icon">
+        <i class="bi" [class]="'bi-' + config.icon"></i>
+      </div>
+      <h3 class="modal-title">{{ config.title }}</h3>
+    </div>
+    <div class="modal-body">
+      {{ config.message }}
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="cancel()">
+        {{ config.cancelText }}
+      </button>
+      <button class="btn btn-primary" (click)="confirm()">
+        {{ config.confirmText }}
+      </button>
+    </div>
+  </div>
+</div>
