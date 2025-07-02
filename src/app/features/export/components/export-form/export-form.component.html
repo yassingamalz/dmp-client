@@ -1,1 +1,56 @@
-<p>export-form works!</p>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-icon">
+      <i class="bi bi-list-check"></i>
+    </div>
+    <h2 class="card-title">Export Details</h2>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="exportForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label required-field">Order Number</label>
+          <app-autocomplete-input
+            placeholder="Enter order number"
+            formControlName="order"
+            [suggestions]="orderSuggestions"
+            [loading]="orderLoading"
+            actionIcon="bi-qr-code-scan"
+            actionTooltip="Scan barcode"
+            (inputChange)="onOrderInput($event)"
+            (suggestionSelected)="onOrderSelected($event)"
+            (actionClicked)="scanBarcode()">
+          </app-autocomplete-input>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Phase</label>
+          <app-autocomplete-input
+            placeholder="Enter phase"
+            formControlName="phase"
+            [suggestions]="phaseSuggestions"
+            actionIcon="bi-lightbulb"
+            actionTooltip="Suggest phase"
+            (inputChange)="onPhaseInput($event)"
+            (suggestionSelected)="onPhaseSelected()"
+            (actionClicked)="suggestPhase()">
+          </app-autocomplete-input>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Progressive</label>
+          <app-autocomplete-input
+            placeholder="Enter progressive"
+            formControlName="progressive"
+            [suggestions]="progressiveSuggestions"
+            actionIcon="bi-plus-circle"
+            actionTooltip="Auto-increment"
+            (inputChange)="onProgressiveInput($event)"
+            (actionClicked)="autoProgressive()">
+          </app-autocomplete-input>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

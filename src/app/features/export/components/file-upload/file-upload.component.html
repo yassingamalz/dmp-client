@@ -1,1 +1,82 @@
-<p>file-upload works!</p>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-icon">
+      <i class="bi bi-cloud-upload"></i>
+    </div>
+    <h2 class="card-title">File Upload</h2>
+  </div>
+  <div class="card-body">
+    <div 
+      class="upload-zone" 
+      [class.drag-over]="dragOver"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+      (click)="openFileDialog()">
+      <div class="upload-icon">
+        <i class="bi bi-cloud-arrow-up"></i>
+      </div>
+      <div class="upload-text">Choose a file or drag & drop it here</div>
+      <div class="upload-subtext">
+        Supports: .hdr.txt, .chr.txt, .fet.txt, .csv, .pdf formats, up to 50MB
+      </div>
+      <button class="browse-btn" type="button">
+        <i class="bi bi-folder2-open"></i>
+        Browse
+      </button>
+      <input 
+        #fileInput
+        type="file" 
+        multiple 
+        accept=".txt,.csv,.pdf,.hdr.txt,.chr.txt,.fet.txt" 
+        style="display: none;"
+        (change)="onFileSelect($event)">
+    </div>
+
+    <div class="file-list" *ngIf="selectedFiles.length > 0">
+      <div class="file-list-header">
+        <i class="bi bi-files"></i>
+        Selected Files
+      </div>
+      <div 
+        *ngFor="let file of selectedFiles; let i = index" 
+        class="file-item">
+        <div class="file-info">
+          <div class="file-icon">
+            <i class="bi bi-file-earmark-text"></i>
+          </div>
+          <div class="file-details">
+            <div class="file-name">{{ file.name }}</div>
+            <div class="file-size">{{ formatFileSize(file.size) }}</div>
+          </div>
+        </div>
+        <div class="file-actions">
+          <button 
+            class="btn-icon danger" 
+            (click)="removeFile(i)" 
+            title="Remove file">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button 
+        class="btn btn-secondary" 
+        (click)="clearFiles()"
+        [disabled]="selectedFiles.length === 0">
+        <i class="bi bi-trash"></i>
+        Clear All
+      </button>
+      <button 
+        class="btn btn-primary" 
+        [disabled]="!canExport || exporting"
+        (click)="exportFiles()">
+        <i [class]="exporting ? 'bi bi-arrow-repeat' : 'bi bi-upload'"></i>
+        {{ exporting ? 'Exporting...' : 'Export to DMP' }}
+      </button>
+    </div>
+  </div>
+</div>
