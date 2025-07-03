@@ -1,0 +1,80 @@
+<!-- src/app/shared/components/qr-scanner-modal/qr-scanner-modal.component.html -->
+<div class="scanner-overlay" [class.show]="isOpen$ | async" (click)="closeModal()">
+  <div class="scanner-modal" (click)="$event.stopPropagation()">
+    <div class="scanner-header">
+      <div class="scanner-title">
+        <div class="scanner-icon">
+          <i class="bi bi-qr-code-scan"></i>
+        </div>
+        <h3>Scanner QR Code</h3>
+      </div>
+      <button class="close-btn" (click)="closeModal()" title="Chiudi">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="scanner-body">
+      <div class="camera-section" *ngIf="hasPermission">
+        <div class="camera-controls" *ngIf="cameras.length > 1">
+          <label for="camera-select">Camera:</label>
+          <select id="camera-select" [(ngModel)]="selectedCamera" (change)="onCameraChange()">
+            <option *ngFor="let camera of cameras" [value]="camera.deviceId">
+              {{ camera.label || 'Camera ' + (cameras.indexOf(camera) + 1) }}
+            </option>
+          </select>
+        </div>
+
+        <div class="video-container">
+          <video #videoElement autoplay playsinline muted></video>
+          <canvas #canvasElement style="display: none;"></canvas>
+          
+          <div class="scan-overlay">
+            <div class="scan-frame"></div>
+            <div class="scan-line" *ngIf="isScanning"></div>
+          </div>
+          
+          <div class="scan-status" *ngIf="isScanning">
+            <div class="status-indicator">
+              <div class="pulse-dot"></div>
+              <span>Scansione in corso...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="permission-denied" *ngIf="!hasPermission">
+        <div class="permission-icon">
+          <i class="bi bi-camera-video-off"></i>
+        </div>
+        <h4>Permesso Camera Richiesto</h4>
+        <p>Per utilizzare lo scanner QR, è necessario consentire l'accesso alla camera.</p>
+        <button class="btn btn-primary" (click)="initializeScanner()">
+          <i class="bi bi-camera"></i>
+          Richiedi Permesso
+        </button>
+      </div>
+
+      <div class="manual-input-section">
+        <div class="divider">
+          <span>oppure</span>
+        </div>
+        <div class="manual-input">
+          <label for="manual-code">Inserisci codice manualmente:</label>
+          <input 
+            id="manual-code" 
+            type="text" 
+            placeholder="Digita o incolla il codice QR"
+            (keyup.enter)="onManualInput($event)"
+            class="manual-input-field">
+        </div>
+      </div>
+    </div>
+
+    <div class="scanner-footer">
+      <button class="btn btn-secondary" (click)="closeModal()">
+        <i class="bi bi-x-circle"></i>
+        Annulla
+      </button>
+    </div>
+  </div>
+</div>

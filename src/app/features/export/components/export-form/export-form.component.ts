@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil, switchMap, tap } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
+import { QrScannerService } from '../../../../core/services/qr-scanner.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { FileManagerService } from '../../../../core/services/file-manager.service';
 import { AutocompleteSuggestion } from '../../../../core/models/autocomplete-suggestion';
@@ -25,6 +26,7 @@ export class ExportFormComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
+    private qrScannerService: QrScannerService,
     private toastService: ToastService,
     private fileManagerService: FileManagerService
   ) {
@@ -48,6 +50,17 @@ export class ExportFormComponent implements OnInit, OnDestroy {
               this.toastService.showToast('info', 'Auto-filled', `Detected order from filename: ${autoFill.order}`);
             }
           }
+        }
+      });
+
+    // Listen for QR scanner results
+    this.qrScannerService.scannedCode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(scannedCode => {
+        if (scannedCode) {
+          this.exportForm.patchValue({ order: scannedCode });
+          this.toastService.showToast('success', 'Codice Scansionato', `Ordine rilevato: ${scannedCode}`);
+          this.loadPhaseSuggestions(); // Auto-load phases when QR is scanned
         }
       });
   }
@@ -86,7 +99,6 @@ export class ExportFormComponent implements OnInit, OnDestroy {
     this.toastService.showToast('info', 'Ordine Selezionato', `Ordine selezionato: ${suggestion.value}`);
     this.loadPhaseSuggestions();
   }
-
 
   onPhaseInput(value: string): void {
     this.loadPhaseSuggestions(value);
@@ -159,12 +171,21 @@ export class ExportFormComponent implements OnInit, OnDestroy {
   }
 
   scanBarcode(): void {
-    this.apiService.generateRandomBarcode()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(barcode => {
-        this.exportForm.patchValue({ order: barcode });
-        this.toastService.showToast('success', 'Codice Scansionato', `Ordine rilevato: ${barcode}`);
-      });
+    // Check if browser supports camera
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      this.toastService.showToast('error', 'Camera Non Supportata', 'Il browser non supporta l\'accesso alla camera');
+      // Fallback to mock for unsupported browsers
+      this.apiService.generateRandomBarcode()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(barcode => {
+          this.exportForm.patchValue({ order: barcode });
+          this.toastService.showToast('success', 'Codice Scansionato (Mock)', `Ordine rilevato: ${barcode}`);
+        });
+      return;
+    }
+
+    // Open QR scanner modal
+    this.qrScannerService.openScanner();
   }
 
   suggestPhase(): void {
