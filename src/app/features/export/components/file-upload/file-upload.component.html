@@ -6,16 +6,23 @@
     <h2 class="card-title">Caricamento File</h2>
   </div>
   <div class="card-body">
-    <div class="upload-zone" [class.drag-over]="dragOver" (dragover)="onDragOver($event)" (dragleave)="onDragLeave()"
-      (drop)="onDrop($event)" (click)="openFileDialog()">
+    <div class="upload-zone" 
+         [class.drag-over]="dragOver" 
+         [class.uploading]="exporting"
+         (dragover)="onDragOver($event)" 
+         (dragleave)="onDragLeave()"
+         (drop)="onDrop($event)" 
+         (click)="openFileDialog()">
       <div class="upload-icon">
-        <i class="bi bi-cloud-arrow-up"></i>
+        <i class="bi" [class]="exporting ? 'bi-arrow-repeat' : 'bi-cloud-arrow-up'"></i>
       </div>
-      <div class="upload-text">Scegli un file o trascinalo qui</div>
+      <div class="upload-text">
+        {{ exporting ? 'Caricamento in corso...' : 'Scegli un file o trascinalo qui' }}
+      </div>
       <div class="upload-subtext">
         Formati supportati: .hdr.txt, .chr.txt, .fet.txt, .csv, .pdf, fino a 50MB
       </div>
-      <button class="browse-btn" type="button">
+      <button class="browse-btn" type="button" [disabled]="exporting">
         <i class="bi bi-folder2-open"></i>
         Sfoglia
       </button>
@@ -26,7 +33,7 @@
     <div class="file-list" *ngIf="selectedFiles.length > 0">
       <div class="file-list-header">
         <i class="bi bi-files"></i>
-        File Selezionati
+        File Selezionati ({{ selectedFiles.length }})
       </div>
       <div *ngFor="let file of selectedFiles; let i = index" class="file-item">
         <div class="file-info">
@@ -39,7 +46,7 @@
           </div>
         </div>
         <div class="file-actions">
-          <button class="btn-icon danger" (click)="removeFile(i)" title="Rimuovi file">
+          <button class="btn-icon danger" (click)="removeFile(i)" title="Rimuovi file" [disabled]="exporting">
             <i class="bi bi-x-lg"></i>
           </button>
         </div>
@@ -47,7 +54,7 @@
     </div>
 
     <div class="actions">
-      <button class="btn btn-secondary" (click)="clearFiles()" [disabled]="selectedFiles.length === 0">
+      <button class="btn btn-secondary" (click)="clearFiles()" [disabled]="selectedFiles.length === 0 || exporting">
         <i class="bi bi-trash"></i>
         Cancella Tutto
       </button>
