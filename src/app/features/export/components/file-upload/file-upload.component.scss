@@ -1,4 +1,10 @@
 // src/app/features/export/components/file-upload/file-upload.component.scss
+.card,
+.card-body {
+  position: relative;
+  z-index: -1;
+}
+
 .upload-zone {
   border: 2px dashed var(--border-color);
   border-radius: 12px;

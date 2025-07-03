@@ -16,18 +16,28 @@
 
 .card {
   position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--ferrari-red), transparent);
-    animation: loadingBar 6s ease-in-out infinite;
-  }
+  overflow: visible; 
+}
+
+.animation-clipper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  overflow: hidden; 
+  pointer-events: none; 
+  z-index: 10;
+}
+
+.animation-line {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--ferrari-red), transparent);
+  animation: loadingBar 6s ease-in-out infinite;
 }
 
 @keyframes loadingBar {
