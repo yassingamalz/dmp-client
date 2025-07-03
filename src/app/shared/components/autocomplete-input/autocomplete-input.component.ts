@@ -6,6 +6,7 @@ import { AutocompleteSuggestion } from '../../../core/models/autocomplete-sugges
 
 @Component({
   selector: 'app-autocomplete-input',
+  standalone: false,
   templateUrl: './autocomplete-input.component.html',
   styleUrls: ['./autocomplete-input.component.scss'],
   providers: [
@@ -18,21 +19,37 @@ import { AutocompleteSuggestion } from '../../../core/models/autocomplete-sugges
 })
 export class AutocompleteInputComponent implements ControlValueAccessor, OnInit, OnDestroy {
   @Input() placeholder = '';
-  @Input() suggestions: AutocompleteSuggestion[] = [];
   @Input() loading = false;
   @Input() actionIcon = '';
   @Input() actionTooltip = '';
-  
+
   @Output() inputChange = new EventEmitter<string>();
   @Output() suggestionSelected = new EventEmitter<AutocompleteSuggestion>();
   @Output() actionClicked = new EventEmitter<void>();
 
+  private _suggestions: AutocompleteSuggestion[] = [];
+
+  @Input()
+  set suggestions(value: AutocompleteSuggestion[]) {
+    this._suggestions = value;
+    // Show dropdown only if user has focused and we're not currently selecting
+    if (!this.isSelectingSuggestion && this.hasBeenFocused) {
+      this.showDropdown = value.length > 0;
+    }
+  }
+
+  get suggestions(): AutocompleteSuggestion[] {
+    return this._suggestions;
+  }
+
   control = new FormControl('');
   showDropdown = false;
   private destroy$ = new Subject<void>();
-  
-  private onChange = (value: string) => {};
-  private onTouched = () => {};
+  private isSelectingSuggestion = false;
+  private hasBeenFocused = false;
+
+  private onChange = (value: string) => { };
+  private onTouched = () => { };
 
   ngOnInit(): void {
     this.control.valueChanges
@@ -44,8 +61,12 @@ export class AutocompleteInputComponent implements ControlValueAccessor, OnInit,
       .subscribe(value => {
         const stringValue = value || '';
         this.onChange(stringValue);
-        this.inputChange.emit(stringValue);
-        this.showDropdown = this.suggestions.length > 0 && stringValue.length > 0;
+
+        // Only emit inputChange if not selecting a suggestion
+        if (!this.isSelectingSuggestion) {
+          this.inputChange.emit(stringValue);
+          // Don't hide dropdown here - let the parent component and suggestions setter handle it
+        }
       });
   }
 
@@ -76,6 +97,15 @@ export class AutocompleteInputComponent implements ControlValueAccessor, OnInit,
 
   onFocus(): void {
     this.onTouched();
+    this.hasBeenFocused = true;
+    const currentValue = this.control.value || '';
+
+    // If empty field, emit empty string to trigger "show all" functionality
+    if (currentValue.length === 0) {
+      this.inputChange.emit('');
+    }
+
+    // If we already have suggestions, show dropdown immediately
     if (this.suggestions.length > 0) {
       this.showDropdown = true;
     }
@@ -84,24 +114,28 @@ export class AutocompleteInputComponent implements ControlValueAccessor, OnInit,
   onBlur(): void {
     // Delay hiding dropdown to allow click on suggestions
     setTimeout(() => {
-      this.showDropdown = false;
+      if (!this.isSelectingSuggestion) {
+        this.showDropdown = false;
+        this.hasBeenFocused = false; // Reset focus state
+      }
     }, 200);
   }
 
   selectSuggestion(suggestion: AutocompleteSuggestion): void {
+    this.isSelectingSuggestion = true;
+    this.showDropdown = false;
+    this.hasBeenFocused = false; // Reset focus state
     this.control.setValue(suggestion.value);
     this.onChange(suggestion.value);
     this.suggestionSelected.emit(suggestion);
-    this.showDropdown = false;
+
+    // Reset the flag after a longer delay to prevent parent updates from showing dropdown
+    setTimeout(() => {
+      this.isSelectingSuggestion = false;
+    }, 500);
   }
 
   onActionClick(): void {
     this.actionClicked.emit();
-  }
-
-  updateSuggestions(suggestions: AutocompleteSuggestion[]): void {
-    this.suggestions = suggestions;
-    const currentValue = this.control.value || '';
-    this.showDropdown = suggestions.length > 0 && currentValue.length > 0;
   }
 }

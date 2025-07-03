@@ -60,10 +60,18 @@ export class ApiService {
   ];
 
   searchWorkOrders(query: string): Observable<WorkOrder[]> {
-    const results = this.mockWorkOrders.filter(wo =>
-      wo.id.toLowerCase().includes(query.toLowerCase()) ||
-      wo.description.toLowerCase().includes(query.toLowerCase())
-    );
+    let results: WorkOrder[];
+    
+    // If query is empty, return all work orders
+    if (query === '') {
+      results = [...this.mockWorkOrders];
+    } else {
+      results = this.mockWorkOrders.filter(wo =>
+        wo.id.toLowerCase().includes(query.toLowerCase()) ||
+        wo.description.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+    
     return of(results).pipe(delay(500));
   }
 

@@ -71,6 +71,28 @@ export class ExportFormComponent implements OnInit, OnDestroy {
   }
 
   onOrderInput(value: string): void {
+    // Show all orders if empty string (clicked on empty field)
+    if (value.length === 0) {
+      this.orderLoading = true;
+      this.apiService.searchWorkOrders('') // Search with empty string to get all
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (workOrders) => {
+            this.orderSuggestions = workOrders.map(wo => ({
+              value: wo.id,
+              label: wo.id,
+              meta: wo.description,
+              badge: 'ERP'
+            }));
+            this.orderLoading = false;
+          },
+          error: () => {
+            this.orderLoading = false;
+          }
+        });
+      return;
+    }
+
     if (value.length < 1) {
       this.orderSuggestions = [];
       return;
@@ -96,6 +118,7 @@ export class ExportFormComponent implements OnInit, OnDestroy {
   }
 
   onOrderSelected(suggestion: AutocompleteSuggestion): void {
+    this.orderSuggestions = []; // Clear suggestions after selection
     this.toastService.showToast('info', 'Ordine Selezionato', `Ordine selezionato: ${suggestion.value}`);
     this.loadPhaseSuggestions();
   }
@@ -105,11 +128,16 @@ export class ExportFormComponent implements OnInit, OnDestroy {
   }
 
   onPhaseSelected(): void {
+    this.phaseSuggestions = []; // Clear suggestions after selection
     this.loadProgressiveSuggestions();
   }
 
   onProgressiveInput(value: string): void {
     this.loadProgressiveSuggestions(value);
+  }
+
+  onProgressiveSelected(): void {
+    this.progressiveSuggestions = []; // Clear suggestions after selection
   }
 
   private loadPhaseSuggestions(filter = ''): void {
@@ -124,7 +152,11 @@ export class ExportFormComponent implements OnInit, OnDestroy {
       .subscribe(workOrder => {
         if (workOrder) {
           let phases = workOrder.phases;
-          if (filter) {
+          
+          // If filter is empty (clicked on empty field), show all phases
+          if (filter === '') {
+            phases = workOrder.phases;
+          } else if (filter) {
             phases = phases.filter(phase =>
               phase.toLowerCase().includes(filter.toLowerCase())
             );
@@ -160,7 +192,8 @@ export class ExportFormComponent implements OnInit, OnDestroy {
           { value: lastProgressive, label: lastProgressive, badge: 'Last used' }
         ];
 
-        if (filter) {
+        // If filter is provided and not empty, filter suggestions
+        if (filter && filter.length > 0) {
           suggestions = suggestions.filter(sugg =>
             sugg.value.includes(filter) || sugg.label.toLowerCase().includes(filter.toLowerCase())
           );
