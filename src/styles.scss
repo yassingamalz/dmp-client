@@ -12,10 +12,10 @@
   --accent-primary: #0d6efd;
   --accent-primary-rgb: 13, 110, 253;
   --accent-secondary: #6f42c1;
-  --success-color: #198754;
+  --success-color: #0a5c36;
   --danger-color: #dc3545;
   --warning-color: #fd7e14;
-  --ferrari-red: #dc143c;
+  --ferrari-red: #b8082b;
   --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
@@ -1041,4 +1041,25 @@ router-outlet + * {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+}
+
+/* Enhanced Header Animations */
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(25, 135, 84, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(25, 135, 84, 0.6);
+  }
 }

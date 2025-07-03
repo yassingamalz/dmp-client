@@ -1,34 +1,82 @@
 <header class="header">
-  <div class="header-left">
-    <h1>DMP Client</h1>
-    <span class="version-badge">v2.0.0</span>
-  </div>
-  <div class="header-info">
-    <div class="info-item">
-      <span class="info-label">Macchina</span>
-      <span class="info-value">{{ machineInfo.id }} ({{ machineInfo.name }})</span>
+  <div class="header-main">
+    <div class="header-container">
+      <div class="header-brand">
+        <div class="brand-logo">
+          <i class="bi bi-grid-3x3-gap-fill"></i>
+        </div>
+        <div class="brand-info">
+          <h1 class="brand-title">DMP Client</h1>
+          <span class="version-badge">v2.0.0</span>
+        </div>
+      </div>
+
+      <div class="header-status">
+        <div class="status-item">
+          <span class="status-label">Machine</span>
+          <span class="status-value">{{ machineInfo.name }}</span>
+        </div>
+
+        <div class="status-item">
+          <span class="status-label">Host</span>
+          <span class="status-value">{{ machineInfo.id }}</span>
+        </div>
+
+        <div class="status-item">
+          <span class="status-label">Status</span>
+          <span class="status-value">
+            <div class="status-indicator">
+              <i class="bi bi-wifi status-icon online"></i>
+              <span class="status-text">{{ machineInfo.status }}</span>
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="theme-toggle" (click)="toggleTheme()">
+          <div class="toggle-track" [class.active]="(currentTheme$ | async) === 'dark'">
+            <div class="toggle-thumb">
+              <i [class]="(currentTheme$ | async) === 'light' ? 'bi bi-moon-fill' : 'bi bi-sun-fill'"></i>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="info-item">
-      <span class="info-label">Stato</span>
-      <span class="info-value">
-        <span class="status-indicator">
-          <span class="status-dot"></span>
-          {{ machineInfo.status }}
-        </span>
-      </span>
+  </div>
+
+  <nav class="header-nav">
+    <div class="nav-container">
+      <div class="nav-tabs">
+        <button class="nav-tab" [class.active]="currentRoute === '/export'" (click)="navigateTo('/export')">
+          <i class="bi bi-upload"></i>
+          <span>Export</span>
+        </button>
+        <button class="nav-tab" [class.active]="currentRoute === '/files'" (click)="navigateTo('/files')">
+          <i class="bi bi-folder"></i>
+          <span>Files</span>
+        </button>
+        <button class="nav-tab" [class.active]="currentRoute === '/reports'" (click)="navigateTo('/reports')">
+          <i class="bi bi-bar-chart"></i>
+          <span>Reports</span>
+        </button>
+        <button class="nav-tab" [class.active]="currentRoute === '/statistics'" (click)="navigateTo('/statistics')">
+          <i class="bi bi-graph-up"></i>
+          <span>Statistics</span>
+        </button>
+      </div>
+
+      <div class="nav-actions">
+        <button class="action-btn" title="Settings">
+          <i class="bi bi-gear"></i>
+        </button>
+        <button class="action-btn" title="Notifications">
+          <i class="bi bi-bell"></i>
+        </button>
+        <button class="action-btn" title="Help">
+          <i class="bi bi-question-circle"></i>
+        </button>
+      </div>
     </div>
-  </div>
-  <div class="header-actions">
-    <button class="nav-btn" [class.active]="currentRoute === '/export'" (click)="navigateTo('/export')">
-      <i class="bi bi-upload"></i>
-      Esporta
-    </button>
-    <button class="nav-btn" [class.active]="currentRoute === '/files'" (click)="navigateTo('/files')">
-      <i class="bi bi-files"></i>
-      File
-    </button>
-    <button class="theme-toggle" (click)="toggleTheme()" title="Cambia tema">
-      <i [class]="(currentTheme$ | async) === 'light' ? 'bi bi-moon-fill' : 'bi bi-sun-fill'"></i>
-    </button>
-  </div>
+  </nav>
 </header>
