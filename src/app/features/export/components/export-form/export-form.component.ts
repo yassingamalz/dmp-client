@@ -19,7 +19,7 @@ export class ExportFormComponent implements OnInit, OnDestroy {
   phaseSuggestions: AutocompleteSuggestion[] = [];
   progressiveSuggestions: AutocompleteSuggestion[] = [];
   orderLoading = false;
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -83,9 +83,10 @@ export class ExportFormComponent implements OnInit, OnDestroy {
   }
 
   onOrderSelected(suggestion: AutocompleteSuggestion): void {
-    this.toastService.showToast('info', 'Order Selected', `Selected work order: ${suggestion.value}`);
+    this.toastService.showToast('info', 'Ordine Selezionato', `Ordine selezionato: ${suggestion.value}`);
     this.loadPhaseSuggestions();
   }
+
 
   onPhaseInput(value: string): void {
     this.loadPhaseSuggestions(value);
@@ -112,7 +113,7 @@ export class ExportFormComponent implements OnInit, OnDestroy {
         if (workOrder) {
           let phases = workOrder.phases;
           if (filter) {
-            phases = phases.filter(phase => 
+            phases = phases.filter(phase =>
               phase.toLowerCase().includes(filter.toLowerCase())
             );
           }
@@ -131,7 +132,7 @@ export class ExportFormComponent implements OnInit, OnDestroy {
   private loadProgressiveSuggestions(filter = ''): void {
     const orderValue = this.exportForm.get('order')?.value;
     const phaseValue = this.exportForm.get('phase')?.value;
-    
+
     if (!orderValue || !phaseValue) {
       this.progressiveSuggestions = [];
       return;
@@ -141,14 +142,14 @@ export class ExportFormComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(lastProgressive => {
         const nextProgressive = String(parseInt(lastProgressive) + 1).padStart(3, '0');
-        
+
         let suggestions = [
           { value: nextProgressive, label: `${nextProgressive} (Next)`, badge: 'Suggested' },
           { value: lastProgressive, label: lastProgressive, badge: 'Last used' }
         ];
 
         if (filter) {
-          suggestions = suggestions.filter(sugg => 
+          suggestions = suggestions.filter(sugg =>
             sugg.value.includes(filter) || sugg.label.toLowerCase().includes(filter.toLowerCase())
           );
         }
@@ -162,14 +163,14 @@ export class ExportFormComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(barcode => {
         this.exportForm.patchValue({ order: barcode });
-        this.toastService.showToast('success', 'Barcode Scanned', `Detected order: ${barcode}`);
+        this.toastService.showToast('success', 'Codice Scansionato', `Ordine rilevato: ${barcode}`);
       });
   }
 
   suggestPhase(): void {
     const orderValue = this.exportForm.get('order')?.value;
     if (!orderValue) {
-      this.toastService.showToast('warning', 'Missing Order', 'Please enter an order number first');
+      this.toastService.showToast('warning', 'Ordine Mancante', 'Inserisci prima un numero ordine');
       return;
     }
 
@@ -178,10 +179,10 @@ export class ExportFormComponent implements OnInit, OnDestroy {
       .subscribe(workOrder => {
         if (workOrder && workOrder.phases.length > 0) {
           this.exportForm.patchValue({ phase: workOrder.phases[0] });
-          this.toastService.showToast('success', 'Phase Suggested', `Set phase to: ${workOrder.phases[0]}`);
+          this.toastService.showToast('success', 'Fase Suggerita', `Fase impostata a: ${workOrder.phases[0]}`);
         } else {
           this.exportForm.patchValue({ phase: '10' });
-          this.toastService.showToast('info', 'Default Phase', 'Set default phase: 10');
+          this.toastService.showToast('info', 'Fase Predefinita', 'Fase predefinita impostata: 10');
         }
       });
   }
@@ -189,9 +190,9 @@ export class ExportFormComponent implements OnInit, OnDestroy {
   autoProgressive(): void {
     const orderValue = this.exportForm.get('order')?.value;
     const phaseValue = this.exportForm.get('phase')?.value;
-    
+
     if (!orderValue || !phaseValue) {
-      this.toastService.showToast('warning', 'Missing Information', 'Please enter order and phase first');
+      this.toastService.showToast('warning', 'Informazioni Mancanti', 'Inserisci prima ordine e fase');
       return;
     }
 
@@ -200,7 +201,7 @@ export class ExportFormComponent implements OnInit, OnDestroy {
       .subscribe(lastProgressive => {
         const nextProgressive = String(parseInt(lastProgressive) + 1).padStart(3, '0');
         this.exportForm.patchValue({ progressive: nextProgressive });
-        this.toastService.showToast('success', 'Progressive Set', `Auto-incremented to: ${nextProgressive}`);
+        this.toastService.showToast('success', 'Progressivo Impostato', `Auto-incrementato a: ${nextProgressive}`);
       });
   }
 }

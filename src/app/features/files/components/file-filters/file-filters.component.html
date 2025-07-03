@@ -1,28 +1,25 @@
 <div class="filter-bar" [formGroup]="filterForm">
   <div class="filter-group">
-    <label class="form-label">Year</label>
+    <label class="form-label">Anno</label>
     <select class="filter-select" formControlName="year">
       <option *ngFor="let year of years" [value]="year">{{ year }}</option>
     </select>
   </div>
 
   <div class="filter-group">
-    <label class="form-label">Month</label>
+    <label class="form-label">Mese</label>
     <select class="filter-select" formControlName="month">
       <option *ngFor="let month of months" [value]="month.value">{{ month.label }}</option>
     </select>
   </div>
 
   <div class="filter-group">
-    <label class="form-label">Order</label>
-    <input 
-      type="text" 
-      class="filter-select" 
-      placeholder="Filter by order" 
-      formControlName="order">
+    <label class="form-label">Ordine</label>
+    <input type="text" class="filter-select" placeholder="Filtra per ordine" formControlName="order">
   </div>
 
   <button class="btn btn-secondary" (click)="onRefresh()">
     <i class="bi bi-arrow-clockwise"></i>
-    Refresh
+    Aggiorna
   </button>
+</div>

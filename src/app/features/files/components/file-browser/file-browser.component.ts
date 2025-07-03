@@ -12,17 +12,17 @@ import { ToastService } from '../../../../core/services/toast.service';
 export class FileBrowserComponent {
   @Input() files: UploadedFile[] | null = [];
 
-  constructor(private toastService: ToastService) {}
+  constructor(private toastService: ToastService) { }
 
   viewFile(file: UploadedFile): void {
     const displayName = file.name.split('#')[1] || file.name;
-    this.toastService.showToast('info', 'File Viewer', `Opening: ${displayName}`);
+    this.toastService.showToast('info', 'Visualizzatore File', `Apertura: ${displayName}`);
   }
 
   downloadFile(event: Event, file: UploadedFile): void {
     event.stopPropagation();
     const displayName = file.name.split('#')[1] || file.name;
-    this.toastService.showToast('success', 'Download Started', `Downloading: ${displayName}`);
+    this.toastService.showToast('success', 'Download Iniziato', `Scaricamento: ${displayName}`);
   }
 
   formatFileSize(bytes: number): string {

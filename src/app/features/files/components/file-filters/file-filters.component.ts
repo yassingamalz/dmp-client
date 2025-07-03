@@ -4,7 +4,7 @@ import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-file-filters',
-  standalone:false,
+  standalone: false,
   templateUrl: './file-filters.component.html',
   styleUrls: ['./file-filters.component.scss']
 })
@@ -14,19 +14,19 @@ export class FileFiltersComponent {
 
   years = ['2024', '2023', '2022'];
   months = [
-    { value: '', label: 'All Months' },
-    { value: '01', label: 'January' },
-    { value: '02', label: 'February' },
-    { value: '03', label: 'March' },
-    { value: '04', label: 'April' },
-    { value: '05', label: 'May' },
-    { value: '06', label: 'June' },
-    { value: '07', label: 'July' },
-    { value: '08', label: 'August' },
-    { value: '09', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' }
+    { value: '', label: 'Tutti i Mesi' },
+    { value: '01', label: 'Gennaio' },
+    { value: '02', label: 'Febbraio' },
+    { value: '03', label: 'Marzo' },
+    { value: '04', label: 'Aprile' },
+    { value: '05', label: 'Maggio' },
+    { value: '06', label: 'Giugno' },
+    { value: '07', label: 'Luglio' },
+    { value: '08', label: 'Agosto' },
+    { value: '09', label: 'Settembre' },
+    { value: '10', label: 'Ottobre' },
+    { value: '11', label: 'Novembre' },
+    { value: '12', label: 'Dicembre' }
   ];
 
   onRefresh(): void {

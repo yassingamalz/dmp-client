@@ -14,7 +14,7 @@ import { ApiService } from '../../../core/services/api.service';
           <div class="card-icon">
             <i class="bi bi-archive"></i>
           </div>
-          <h2 class="card-title">Exported Files</h2>
+          <h2 class="card-title">File Esportati</h2>
         </div>
         <div class="card-body">
           <app-file-filters 
@@ -28,7 +28,7 @@ import { ApiService } from '../../../core/services/api.service';
       </div>
     </div>
   `,
-  standalone:false,
+  standalone: false,
   styles: [`
     .files-view {
       animation: fadeIn 0.3s ease;

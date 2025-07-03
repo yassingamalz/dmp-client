@@ -9,18 +9,18 @@ import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-file-upload',
-  standalone:false,
+  standalone: false,
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.scss']
 })
 export class FileUploadComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  
+
   selectedFiles: File[] = [];
   dragOver = false;
   exporting = false;
   canExport = false;
-  
+
   private destroy$ = new Subject<void>();
   private exportForm!: FormGroup;
 
@@ -85,20 +85,20 @@ export class FileUploadComponent implements OnInit, OnDestroy {
 
   addFiles(files: File[]): void {
     const result = this.fileManagerService.addFiles(files);
-    
+
     if (result.rejected.length > 0) {
       this.toastService.showToast(
-        'warning', 
-        'Invalid Files', 
-        `${result.rejected.length} files were rejected (invalid type or duplicate)`
+        'warning',
+        'File Non Validi',
+        `${result.rejected.length} file sono stati rifiutati (tipo non valido o duplicato)`
       );
     }
 
     if (result.added.length > 0) {
       this.toastService.showToast(
-        'success', 
-        'Files Added', 
-        `Added ${result.added.length} files to upload queue`
+        'success',
+        'File Aggiunti',
+        `Aggiunti ${result.added.length} file alla coda di caricamento`
       );
     }
   }
@@ -106,32 +106,32 @@ export class FileUploadComponent implements OnInit, OnDestroy {
   removeFile(index: number): void {
     const removedFile = this.fileManagerService.removeFile(index);
     if (removedFile) {
-      this.toastService.showToast('info', 'File Removed', `Removed: ${removedFile.name}`);
+      this.toastService.showToast('info', 'File Rimosso', `Rimosso: ${removedFile.name}`);
     }
   }
 
   clearFiles(): void {
     if (this.selectedFiles.length === 0) return;
-    
+
     this.modalService.showModal({
-      title: 'Clear All Files',
-      message: `Are you sure you want to remove all ${this.selectedFiles.length} selected files?`,
+      title: 'Cancella Tutti i File',
+      message: `Sei sicuro di voler rimuovere tutti i ${this.selectedFiles.length} file selezionati?`,
       icon: 'trash',
       onConfirm: () => {
         this.fileManagerService.clearFiles();
-        this.toastService.showToast('success', 'Files Cleared', 'All files removed from queue');
+        this.toastService.showToast('success', 'File Cancellati', 'Tutti i file rimossi dalla coda');
       }
     });
   }
 
   exportFiles(): void {
-    const order = 'ORD-2024-001'; // This should come from the form service
+    const order = 'ORD-2024-001';
     const phase = '10';
     const progressive = '001';
 
     this.modalService.showModal({
-      title: 'Confirm Export',
-      message: `Export ${this.selectedFiles.length} files to DMP?\n\nOrder: ${order}\nPhase: ${phase || 'N/A'}\nProgressive: ${progressive || 'N/A'}`,
+      title: 'Conferma Esportazione',
+      message: `Esportare ${this.selectedFiles.length} file su DMP?\n\nOrdine: ${order}\nFase: ${phase || 'N/D'}\nProgressivo: ${progressive || 'N/D'}`,
       icon: 'upload',
       onConfirm: () => this.performExport(order, phase, progressive)
     });
@@ -152,15 +152,15 @@ export class FileUploadComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result) => {
           if (result.success) {
-            this.toastService.showToast('success', 'Export Complete', result.message);
+            this.toastService.showToast('success', 'Esportazione Completata', result.message);
             this.fileManagerService.clearFiles();
           } else {
-            this.toastService.showToast('error', 'Export Failed', result.message);
+            this.toastService.showToast('error', 'Esportazione Fallita', result.message);
           }
           this.exporting = false;
         },
         error: () => {
-          this.toastService.showToast('error', 'Export Failed', 'An error occurred during export');
+          this.toastService.showToast('error', 'Esportazione Fallita', 'Si è verificato un errore durante l\'esportazione');
           this.exporting = false;
         }
       });

@@ -11,10 +11,10 @@ import { WorkOrder } from '../models/work-order';
 })
 export class ApiService {
   private mockWorkOrders: WorkOrder[] = [
-    { id: "ORD-2024-001", description: "Cylinder Head Assembly", phases: ["10", "20", "30", "40"] },
-    { id: "ORD-2024-002", description: "Engine Block Machining", phases: ["15", "25", "35"] },
-    { id: "WO-2024-152", description: "Piston Ring Production", phases: ["05", "15", "25"] },
-    { id: "ORD-2024-003", description: "Crankshaft Processing", phases: ["10", "20", "30"] }
+    { id: "ORD-2024-001", description: "Assemblaggio Testata Cilindri", phases: ["10", "20", "30", "40"] },
+    { id: "ORD-2024-002", description: "Lavorazione Monoblocco Motore", phases: ["15", "25", "35"] },
+    { id: "WO-2024-152", description: "Produzione Fasce Elastiche", phases: ["05", "15", "25"] },
+    { id: "ORD-2024-003", description: "Lavorazione Albero Motore", phases: ["10", "20", "30"] }
   ];
 
   private mockExportHistory: ExportHistory[] = [
@@ -25,42 +25,42 @@ export class ApiService {
   ];
 
   private mockUploadedFiles: UploadedFile[] = [
-    { 
-      name: "CG008668§ORD-2024-001§10§001#measurement1.hdr.txt", 
-      size: 15420, 
-      date: "2024-07-01T10:30:00", 
-      order: "ORD-2024-001", 
-      phase: "10", 
-      progressive: "001" 
+    {
+      name: "CG008668§ORD-2024-001§10§001#measurement1.hdr.txt",
+      size: 15420,
+      date: "2024-07-01T10:30:00",
+      order: "ORD-2024-001",
+      phase: "10",
+      progressive: "001"
     },
-    { 
-      name: "CG008668§ORD-2024-001§20§002#measurement2.chr.txt", 
-      size: 8960, 
-      date: "2024-07-01T14:15:00", 
-      order: "ORD-2024-001", 
-      phase: "20", 
-      progressive: "002" 
+    {
+      name: "CG008668§ORD-2024-001§20§002#measurement2.chr.txt",
+      size: 8960,
+      date: "2024-07-01T14:15:00",
+      order: "ORD-2024-001",
+      phase: "20",
+      progressive: "002"
     },
-    { 
-      name: "CG008668§WO-2024-152§15§001#profile_data.csv", 
-      size: 25600, 
-      date: "2024-06-30T09:45:00", 
-      order: "WO-2024-152", 
-      phase: "15", 
-      progressive: "001" 
+    {
+      name: "CG008668§WO-2024-152§15§001#profile_data.csv",
+      size: 25600,
+      date: "2024-06-30T09:45:00",
+      order: "WO-2024-152",
+      phase: "15",
+      progressive: "001"
     },
-    { 
-      name: "CG008668§ORD-2024-003§10§001#report.pdf", 
-      size: 127840, 
-      date: "2024-06-29T16:20:00", 
-      order: "ORD-2024-003", 
-      phase: "10", 
-      progressive: "001" 
+    {
+      name: "CG008668§ORD-2024-003§10§001#report.pdf",
+      size: 127840,
+      date: "2024-06-29T16:20:00",
+      order: "ORD-2024-003",
+      phase: "10",
+      progressive: "001"
     }
   ];
 
   searchWorkOrders(query: string): Observable<WorkOrder[]> {
-    const results = this.mockWorkOrders.filter(wo => 
+    const results = this.mockWorkOrders.filter(wo =>
       wo.id.toLowerCase().includes(query.toLowerCase()) ||
       wo.description.toLowerCase().includes(query.toLowerCase())
     );
@@ -76,16 +76,15 @@ export class ApiService {
     const entries = this.mockExportHistory
       .filter(exp => exp.order === order && exp.phase === phase)
       .sort((a, b) => parseInt(b.progressive) - parseInt(a.progressive));
-    
+
     const lastProgressive = entries.length > 0 ? entries[0].progressive : "000";
     return of(lastProgressive).pipe(delay(200));
   }
 
   exportFiles(request: ExportRequest): Observable<{ success: boolean; message: string }> {
-    // Simulate API call
-    return of({ 
-      success: true, 
-      message: `Successfully exported ${request.payload.length} files` 
+    return of({
+      success: true,
+      message: `Esportati con successo ${request.payload.length} file`
     }).pipe(delay(2000));
   }
 

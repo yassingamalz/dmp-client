@@ -23,10 +23,9 @@ export class AppComponent implements OnInit {
   constructor(
     private themeService: ThemeService,
     private toastService: ToastService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    // Welcome message
-    this.toastService.showToast('success', 'Welcome!', 'DMP Client is ready to use');
+    this.toastService.showToast('success', 'Benvenuto!', 'DMP Client è pronto per l\'uso');
   }
 }
