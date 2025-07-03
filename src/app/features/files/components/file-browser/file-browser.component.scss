@@ -3,20 +3,116 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
+  min-height: 200px;
+}
+
+.skeleton-container {
+  display: contents;
+}
+
+.skeleton-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  opacity: 0;
+  animation: skeletonSlideIn 0.6s ease-out forwards;
+}
+
+.skeleton-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.skeleton-title {
+  height: 18px;
+  background: var(--skeleton-bg);
+  border-radius: 4px;
+  width: 70%;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-action {
+  height: 24px;
+  width: 24px;
+  background: var(--skeleton-bg);
+  border-radius: 50%;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-meta {
+  height: 14px;
+  background: var(--skeleton-bg);
+  border-radius: 4px;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+
+  &.short {
+    width: 60%;
+  }
+}
+
+.skeleton-footer {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.skeleton-badge {
+  height: 16px;
+  width: 50px;
+  background: var(--skeleton-bg);
+  border-radius: 12px;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+.file-cards-container {
+  display: contents;
 }
 
 .file-card {
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 1rem;
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  animation: fileCardSlideIn 0.5s ease-out forwards;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s ease;
+  }
 
   &:hover {
     border-color: var(--ferrari-red);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+
+    &::before {
+      left: 100%;
+    }
+
+    .file-action-btn {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  &:active {
+    transform: translateY(-2px) scale(1.01);
   }
 }
 
@@ -30,13 +126,16 @@
 .file-card-title {
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 0.875rem;
-  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
 }
 
 .file-card-meta {
   font-size: 0.75rem;
   color: var(--text-muted);
+  margin-bottom: 0.25rem;
+  line-height: 1.4;
 }
 
 .file-card-actions {
@@ -44,15 +143,90 @@
   gap: 0.5rem;
 }
 
+.file-action-btn {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s ease;
+  background: var(--ferrari-red);
+  color: white;
+  border: none;
+  
+  &:hover {
+    background: var(--accent-secondary);
+    transform: scale(1.1);
+  }
+}
+
 .empty-state {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 2rem;
+  padding: 4rem 2rem;
   color: var(--text-muted);
+  opacity: 0;
+  animation: fadeInUp 0.8s ease-out 0.5s forwards;
 
   i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
     display: block;
+    opacity: 0.6;
+  }
+}
+
+/* Animations */
+@keyframes skeletonSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes fileCardSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .file-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .file-card {
+    padding: 1rem;
+  }
+  
+  .skeleton-card {
+    padding: 1rem;
   }
 }

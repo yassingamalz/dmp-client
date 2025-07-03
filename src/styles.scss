@@ -94,7 +94,7 @@ html {
 .card-icon {
   width: 32px;
   height: 32px;
-  background: var(--accent-primary);
+  background: var(--ferrari-red);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -627,5 +627,63 @@ html {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Skeleton Loading Styles */
+:root {
+  --skeleton-bg: linear-gradient(90deg, 
+    var(--bg-secondary) 25%, 
+    var(--bg-tertiary) 50%, 
+    var(--bg-secondary) 75%);
+  --skeleton-bg-size: 200px 100%;
+}
+
+[data-theme="dark"] {
+  --skeleton-bg: linear-gradient(90deg, 
+    var(--bg-secondary) 25%, 
+    var(--bg-tertiary) 50%, 
+    var(--bg-secondary) 75%);
+}
+
+.skeleton-shimmer {
+  background: var(--skeleton-bg);
+  background-size: var(--skeleton-bg-size);
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Enhanced micro-interactions */
+.file-card,
+.card {
+  will-change: transform, box-shadow;
+}
+
+.btn-icon {
+  will-change: transform, background-color;
+}
+
+/* Smooth transitions for route changes */
+router-outlet + * {
+  display: block;
+  animation: routeSlideIn 0.4s ease-out;
+}
+
+@keyframes routeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
 }

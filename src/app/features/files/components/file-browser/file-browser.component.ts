@@ -8,9 +8,9 @@ import { ToastService } from '../../../../core/services/toast.service';
   templateUrl: './file-browser.component.html',
   styleUrl: './file-browser.component.scss'
 })
-
 export class FileBrowserComponent {
   @Input() files: UploadedFile[] | null = [];
+  @Input() loading: boolean = false;
 
   constructor(private toastService: ToastService) { }
 
@@ -39,5 +39,9 @@ export class FileBrowserComponent {
 
   getDisplayName(fileName: string): string {
     return fileName.split('#')[1] || fileName;
+  }
+
+  getSkeletonItems(): number[] {
+    return Array(6).fill(0).map((_, i) => i);
   }
 }

@@ -1,24 +1,48 @@
 <div class="file-grid">
-  <div *ngFor="let file of files" class="file-card" (click)="viewFile(file)">
-    <div class="file-card-header">
-      <div>
-        <div class="file-card-title">{{ getDisplayName(file.name) }}</div>
-        <div class="file-card-meta">
-          {{ formatFileSize(file.size) }} • {{ formatDate(file.date) }}
-        </div>
-        <div class="file-card-meta">
-          Ordine: {{ file.order }} • Fase: {{ file.phase }} • Progressivo: {{ file.progressive }}
-        </div>
+  <!-- Loading skeleton -->
+  <div *ngIf="loading" class="skeleton-container">
+    <div *ngFor="let item of getSkeletonItems(); let i = index" 
+         class="skeleton-card"
+         [style.animation-delay]="i * 0.1 + 's'">
+      <div class="skeleton-header">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-action"></div>
       </div>
-      <div class="file-card-actions">
-        <button class="btn-icon" (click)="downloadFile($event, file)" title="Scarica">
-          <i class="bi bi-download"></i>
-        </button>
+      <div class="skeleton-meta"></div>
+      <div class="skeleton-meta short"></div>
+      <div class="skeleton-footer">
+        <div class="skeleton-badge"></div>
+        <div class="skeleton-badge"></div>
       </div>
     </div>
   </div>
 
-  <div *ngIf="!files || files.length === 0" class="empty-state">
+  <!-- Actual file cards -->
+  <div *ngIf="!loading" class="file-cards-container">
+    <div *ngFor="let file of files; let i = index" 
+         class="file-card" 
+         [style.animation-delay]="i * 0.05 + 's'"
+         (click)="viewFile(file)">
+      <div class="file-card-header">
+        <div>
+          <div class="file-card-title">{{ getDisplayName(file.name) }}</div>
+          <div class="file-card-meta">
+            {{ formatFileSize(file.size) }} • {{ formatDate(file.date) }}
+          </div>
+          <div class="file-card-meta">
+            Ordine: {{ file.order }} • Fase: {{ file.phase }} • Progressivo: {{ file.progressive }}
+          </div>
+        </div>
+        <div class="file-card-actions">
+          <button class="btn-icon file-action-btn" (click)="downloadFile($event, file)" title="Scarica">
+            <i class="bi bi-download"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && (!files || files.length === 0)" class="empty-state">
     <i class="bi bi-inbox"></i>
     Nessun file trovato per i filtri selezionati
   </div>

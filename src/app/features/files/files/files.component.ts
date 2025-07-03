@@ -1,7 +1,7 @@
 // src/app/features/files/files.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Observable, combineLatest, map, startWith } from 'rxjs';
+import { Observable, combineLatest, map, startWith, delay, finalize } from 'rxjs';
 import { UploadedFile } from '../../../core/models/uploaded-file';
 import { ApiService } from '../../../core/services/api.service';
 
@@ -22,7 +22,8 @@ import { ApiService } from '../../../core/services/api.service';
             (refresh)="refreshFiles()">
           </app-file-filters>
           <app-file-browser 
-            [files]="filteredFiles$ | async">
+            [files]="filteredFiles$ | async"
+            [loading]="loading">
           </app-file-browser>
         </div>
       </div>
@@ -44,6 +45,7 @@ export class FilesComponent implements OnInit {
   filterForm: FormGroup;
   allFiles$: Observable<UploadedFile[]>;
   filteredFiles$: Observable<UploadedFile[]> | undefined;
+  loading = true;
 
   constructor(
     private fb: FormBuilder,
@@ -55,7 +57,10 @@ export class FilesComponent implements OnInit {
       order: ['']
     });
 
-    this.allFiles$ = this.apiService.getUploadedFiles();
+    this.allFiles$ = this.apiService.getUploadedFiles().pipe(
+      delay(800), // Simulate network delay
+      finalize(() => this.loading = false)
+    );
   }
 
   ngOnInit(): void {
@@ -68,7 +73,11 @@ export class FilesComponent implements OnInit {
   }
 
   refreshFiles(): void {
-    this.allFiles$ = this.apiService.getUploadedFiles();
+    this.loading = true;
+    this.allFiles$ = this.apiService.getUploadedFiles().pipe(
+      delay(800), // Simulate network delay
+      finalize(() => this.loading = false)
+    );
     this.ngOnInit(); // Re-initialize the filtered files observable
   }
 
