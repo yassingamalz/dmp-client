@@ -11,5 +11,9 @@ export const routes: Routes = [
     path: 'files', 
     loadChildren: () => import('./features/files/files.module').then(m => m.FilesModule)
   },
+  { 
+    path: 'statistics', 
+    loadChildren: () => import('./features/statistics/statistics.module').then(m => m.StatisticsModule)
+  },
   { path: '**', redirectTo: '/export' }
 ];

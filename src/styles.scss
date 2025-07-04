@@ -19,11 +19,18 @@
   --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
-  
+
   /* Enhanced glassmorphism variables */
   --glass-bg: rgba(255, 255, 255, 0.95);
   --glass-border: rgba(255, 255, 255, 0.3);
   --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+
+  /* Skeleton Loading Variables */
+  --skeleton-bg: linear-gradient(90deg,
+      var(--bg-secondary) 25%,
+      var(--bg-tertiary) 50%,
+      var(--bg-secondary) 75%);
+  --skeleton-bg-size: 200px 100%;
 }
 
 [data-theme="dark"] {
@@ -45,11 +52,16 @@
   --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
   --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.5);
-  
+
   /* Enhanced glassmorphism variables for dark theme */
   --glass-bg: rgba(26, 29, 35, 0.95);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+
+  --skeleton-bg: linear-gradient(90deg,
+      var(--bg-secondary) 25%,
+      var(--bg-tertiary) 50%,
+      var(--bg-secondary) 75%);
 }
 
 * {
@@ -617,8 +629,15 @@ html {
 
 /* Animation */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Reduced motion preferences */
@@ -632,18 +651,18 @@ html {
 
 /* Skeleton Loading Styles */
 :root {
-  --skeleton-bg: linear-gradient(90deg, 
-    var(--bg-secondary) 25%, 
-    var(--bg-tertiary) 50%, 
-    var(--bg-secondary) 75%);
+  --skeleton-bg: linear-gradient(90deg,
+      var(--bg-secondary) 25%,
+      var(--bg-tertiary) 50%,
+      var(--bg-secondary) 75%);
   --skeleton-bg-size: 200px 100%;
 }
 
 [data-theme="dark"] {
-  --skeleton-bg: linear-gradient(90deg, 
-    var(--bg-secondary) 25%, 
-    var(--bg-tertiary) 50%, 
-    var(--bg-secondary) 75%);
+  --skeleton-bg: linear-gradient(90deg,
+      var(--bg-secondary) 25%,
+      var(--bg-tertiary) 50%,
+      var(--bg-secondary) 75%);
 }
 
 .skeleton-shimmer {
@@ -656,6 +675,7 @@ html {
   0% {
     background-position: -200px 0;
   }
+
   100% {
     background-position: calc(200px + 100%) 0;
   }
@@ -672,7 +692,7 @@ html {
 }
 
 /* Smooth transitions for route changes */
-router-outlet + * {
+router-outlet+* {
   display: block;
   animation: routeSlideIn 0.4s ease-out;
 }
@@ -682,6 +702,7 @@ router-outlet + * {
     opacity: 0;
     transform: translateX(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -849,7 +870,7 @@ router-outlet + * {
   border-radius: 12px;
   position: relative;
   background: transparent;
-  
+
   &::before,
   &::after {
     content: '';
@@ -858,7 +879,7 @@ router-outlet + * {
     height: 40px;
     border: 4px solid var(--accent-primary);
   }
-  
+
   &::before {
     top: -4px;
     left: -4px;
@@ -866,7 +887,7 @@ router-outlet + * {
     border-bottom: none;
     border-radius: 12px 0 0 0;
   }
-  
+
   &::after {
     bottom: -4px;
     right: -4px;
@@ -891,9 +912,11 @@ router-outlet + * {
   0% {
     transform: translate(-50%, -200%);
   }
+
   50% {
     transform: translate(-50%, -50%);
   }
+
   100% {
     transform: translate(-50%, 100%);
   }
@@ -933,10 +956,12 @@ router-outlet + * {
     transform: scale(0.8);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.2);
     opacity: 0.7;
   }
+
   100% {
     transform: scale(0.8);
     opacity: 1;
@@ -984,7 +1009,7 @@ router-outlet + * {
   position: relative;
   text-align: center;
   margin: 2rem 0;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -994,7 +1019,7 @@ router-outlet + * {
     height: 1px;
     background: var(--border-color);
   }
-  
+
   span {
     background: var(--bg-primary);
     padding: 0 1rem;
@@ -1007,7 +1032,7 @@ router-outlet + * {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  
+
   label {
     font-weight: 500;
     color: var(--text-secondary);
@@ -1023,13 +1048,13 @@ router-outlet + * {
   background: var(--bg-primary);
   color: var(--text-primary);
   transition: all 0.3s ease;
-  
+
   &:focus {
     outline: none;
     border-color: var(--accent-primary);
     box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
   }
-  
+
   &::placeholder {
     color: var(--text-muted);
   }
@@ -1049,6 +1074,7 @@ router-outlet + * {
     transform: translateY(-100%);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -1056,9 +1082,12 @@ router-outlet + * {
 }
 
 @keyframes pulseGlow {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(25, 135, 84, 0.4);
   }
+
   50% {
     box-shadow: 0 0 30px rgba(25, 135, 84, 0.6);
   }

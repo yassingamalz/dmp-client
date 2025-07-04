@@ -33,8 +33,8 @@ export class HeaderComponent implements OnInit {
 
   navigateTo(route: string): void {
     this.currentRoute = route;
-    // For now, only navigate to existing routes
-    if (route === '/export' || route === '/files') {
+    // Navigate to existing routes
+    if (route === '/export' || route === '/files' || route === '/statistics') {
       this.router.navigate([route]);
     } else {
       // Handle non-existing routes gracefully
