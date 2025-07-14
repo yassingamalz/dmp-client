@@ -1,6 +1,7 @@
 // src/app/core/services/file-manager.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { CandidateFile } from '../models/candidate-file';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +9,9 @@ import { BehaviorSubject } from 'rxjs';
 export class FileManagerService {
   private selectedFiles = new BehaviorSubject<File[]>([]);
   public selectedFiles$ = this.selectedFiles.asObservable();
+
+  // Track files that came from candidates for bidirectional sync
+  private candidateFileMap = new Map<string, CandidateFile>();
 
   private validExtensions = ['.txt', '.csv', '.pdf', '.hdr.txt', '.chr.txt', '.fet.txt'];
 
@@ -22,6 +26,12 @@ export class FileManagerService {
 
       if (isValid && isUnique) {
         added.push(file);
+        
+        // Track if this file came from candidates
+        const candidateFile = (file as any).candidateFile as CandidateFile;
+        if (candidateFile) {
+          this.candidateFileMap.set(file.name, candidateFile);
+        }
       } else {
         rejected.push(file);
       }
@@ -39,6 +49,17 @@ export class FileManagerService {
     if (index >= 0 && index < currentFiles.length) {
       const removedFile = currentFiles[index];
       const updatedFiles = currentFiles.filter((_, i) => i !== index);
+      
+      // Check if this file came from candidates
+      const candidateFile = this.candidateFileMap.get(removedFile.name);
+      if (candidateFile) {
+        // Remove from tracking map
+        this.candidateFileMap.delete(removedFile.name);
+        
+        // Add back to candidates (this will be handled by FileDetectionService)
+        this.notifyFileRemovedFromQueue(candidateFile);
+      }
+      
       this.selectedFiles.next(updatedFiles);
       return removedFile;
     }
@@ -46,6 +67,18 @@ export class FileManagerService {
   }
 
   clearFiles(): void {
+    const currentFiles = this.selectedFiles.value;
+    
+    // Return all candidate files back to the candidate list
+    currentFiles.forEach(file => {
+      const candidateFile = this.candidateFileMap.get(file.name);
+      if (candidateFile) {
+        this.notifyFileRemovedFromQueue(candidateFile);
+      }
+    });
+    
+    // Clear tracking map and file list
+    this.candidateFileMap.clear();
     this.selectedFiles.next([]);
   }
 
@@ -77,5 +110,23 @@ export class FileManagerService {
     }
     
     return result;
+  }
+
+  // This method will be called by FileDetectionService
+  private notifyFileRemovedFromQueue(candidateFile: CandidateFile): void {
+    // Emit an event or use a callback mechanism
+    // For now, we'll use a simple approach where FileDetectionService
+    // listens to the selectedFiles$ observable changes
+    console.log(`File ${candidateFile.name} removed from queue, should be added back to candidates`);
+  }
+
+  // Helper method to check if a file came from candidates
+  isFromCandidates(fileName: string): boolean {
+    return this.candidateFileMap.has(fileName);
+  }
+
+  // Helper method to get candidate file info
+  getCandidateFileInfo(fileName: string): CandidateFile | undefined {
+    return this.candidateFileMap.get(fileName);
   }
 }

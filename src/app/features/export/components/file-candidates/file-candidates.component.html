@@ -1,0 +1,69 @@
+<!-- src/app/features/files/components/file-candidates/file-candidates.component.html -->
+<div class="card file-candidates-card">
+  <div class="card-header">
+    <div class="card-icon">
+      <i class="bi bi-folder-plus"></i>
+    </div>
+    <h3 class="card-title">File Candidati</h3>
+    <button class="refresh-btn" (click)="refreshFiles()" [disabled]="loading" title="Aggiorna">
+      <i class="bi" [class]="loading ? 'bi-arrow-repeat spin' : 'bi-arrow-clockwise'"></i>
+    </button>
+  </div>
+
+  <div class="card-body">
+    <!-- Watch Directory Info -->
+    <div class="watch-directory">
+      <div class="directory-info">
+        <i class="bi bi-folder2-open"></i>
+        <span class="directory-path">{{ watchDirectory }}</span>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+      <div class="loading-spinner">
+        <i class="bi bi-arrow-repeat spin"></i>
+      </div>
+      <span class="loading-text">Scansione directory...</span>
+    </div>
+
+    <!-- Candidate Files List -->
+    <div *ngIf="!loading && candidateFiles.length > 0" class="candidates-list">
+      <div *ngFor="let candidate of candidateFiles; let i = index" 
+           class="candidate-item"
+           [style.animation-delay]="i * 0.05 + 's'">
+        <div class="file-info">
+          <div class="file-icon">
+            <i class="bi bi-file-earmark-text"></i>
+          </div>
+          <div class="file-details">
+            <div class="file-name" [title]="candidate.name">{{ candidate.name }}</div>
+            <div class="file-meta">
+              {{ formatFileSize(candidate.size) }} • {{ getTimeAgo(candidate.lastModified) }}
+            </div>
+          </div>
+        </div>
+        <div class="file-actions">
+          <button class="add-btn" (click)="addToExport(candidate)" title="Aggiungi all'esportazione">
+            <i class="bi bi-plus-circle"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && candidateFiles.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <i class="bi bi-folder-x"></i>
+      </div>
+      <div class="empty-title">Nessun File Trovato</div>
+      <div class="empty-subtitle">
+        Non ci sono file candidati nella directory configurata
+      </div>
+      <button class="btn btn-secondary" (click)="refreshFiles()">
+        <i class="bi bi-arrow-clockwise"></i>
+        Riprova
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-// src/app/features/files/files.component.ts
+// src/app/features/files/files/files.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, combineLatest, map, startWith, delay, finalize } from 'rxjs';
@@ -7,39 +7,9 @@ import { ApiService } from '../../../core/services/api.service';
 
 @Component({
   selector: 'app-files',
-  template: `
-    <div class="files-view">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon">
-            <i class="bi bi-archive"></i>
-          </div>
-          <h2 class="card-title">File Esportati</h2>
-        </div>
-        <div class="card-body">
-          <app-file-filters 
-            [filterForm]="filterForm"
-            (refresh)="refreshFiles()">
-          </app-file-filters>
-          <app-file-browser 
-            [files]="filteredFiles$ | async"
-            [loading]="loading">
-          </app-file-browser>
-        </div>
-      </div>
-    </div>
-  `,
   standalone: false,
-  styles: [`
-    .files-view {
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  `]
+  templateUrl: './files.component.html',
+  styleUrls: ['./files.component.scss']
 })
 export class FilesComponent implements OnInit {
   filterForm: FormGroup;

@@ -1,1 +1,21 @@
-<p>files works!</p>
+<!-- src/app/features/files/files/files.component.html -->
+<div class="files-view">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <i class="bi bi-archive"></i>
+      </div>
+      <h2 class="card-title">File Esportati</h2>
+    </div>
+    <div class="card-body">
+      <app-file-filters 
+        [filterForm]="filterForm"
+        (refresh)="refreshFiles()">
+      </app-file-filters>
+      <app-file-browser 
+        [files]="filteredFiles$ | async"
+        [loading]="loading">
+      </app-file-browser>
+    </div>
+  </div>
+</div>

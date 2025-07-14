@@ -84,6 +84,19 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Expand main content for export view - with higher specificity */
+.main-content.export-expanded {
+  max-width: 1600px !important; /* Force override */
+  
+  @media (max-width: 1650px) {
+    max-width: 1400px !important;
+  }
+  
+  @media (max-width: 1200px) {
+    max-width: 1200px !important;
+  }
+}
+
 /* Card Components */
 .card {
   background: var(--bg-primary);
@@ -153,6 +166,7 @@ html {
 
 .input-wrapper {
   position: relative;
+  z-index: 10 !important; /* Ensure proper stacking for autocomplete */
 }
 
 .form-input {
@@ -165,6 +179,8 @@ html {
   color: var(--text-primary);
   transition: all 0.3s ease;
   width: 100%;
+  position: relative;
+  z-index: 1;
 
   &:focus {
     outline: none;
@@ -269,7 +285,7 @@ html {
   }
 }
 
-/* Autocomplete Dropdown */
+/* Autocomplete Dropdown - Enhanced with higher z-index */
 .autocomplete-dropdown {
   position: absolute;
   top: 100%;
@@ -283,7 +299,7 @@ html {
   border-radius: 0 0 12px 12px;
   max-height: 250px;
   overflow-y: auto;
-  z-index: 9999;
+  z-index: 99999 !important; /* High z-index to appear above all content */
   box-shadow: var(--glass-shadow);
   transform: translateY(-2px);
 
@@ -330,6 +346,8 @@ html {
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 100000; /* High z-index for dropdown items */
 
   &:hover {
     background: rgba(255, 255, 255, 0.15);
@@ -607,108 +625,6 @@ html {
   z-index: 10000 !important;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .actions {
-    flex-direction: column;
-  }
-
-  .upload-zone {
-    padding: 2rem 1rem;
-  }
-
-  .filter-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-
-/* Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Reduced motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* Skeleton Loading Styles */
-:root {
-  --skeleton-bg: linear-gradient(90deg,
-      var(--bg-secondary) 25%,
-      var(--bg-tertiary) 50%,
-      var(--bg-secondary) 75%);
-  --skeleton-bg-size: 200px 100%;
-}
-
-[data-theme="dark"] {
-  --skeleton-bg: linear-gradient(90deg,
-      var(--bg-secondary) 25%,
-      var(--bg-tertiary) 50%,
-      var(--bg-secondary) 75%);
-}
-
-.skeleton-shimmer {
-  background: var(--skeleton-bg);
-  background-size: var(--skeleton-bg-size);
-  animation: skeletonShimmer 1.5s ease-in-out infinite;
-}
-
-@keyframes skeletonShimmer {
-  0% {
-    background-position: -200px 0;
-  }
-
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
-}
-
-/* Enhanced micro-interactions */
-.file-card,
-.card {
-  will-change: transform, box-shadow;
-}
-
-.btn-icon {
-  will-change: transform, background-color;
-}
-
-/* Smooth transitions for route changes */
-router-outlet+* {
-  display: block;
-  animation: routeSlideIn 0.4s ease-out;
-}
-
-@keyframes routeSlideIn {
-  0% {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 /* QR Scanner Modal Styles */
 .scanner-overlay {
   position: fixed;
@@ -717,7 +633,7 @@ router-outlet+* {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.8);
-  z-index: 10000;
+  z-index: 100000 !important; /* Highest z-index for modals */
   display: none;
   align-items: center;
   justify-content: center;
@@ -1066,6 +982,108 @@ router-outlet+* {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .upload-zone {
+    padding: 2rem 1rem;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Skeleton Loading Styles */
+:root {
+  --skeleton-bg: linear-gradient(90deg,
+      var(--bg-secondary) 25%,
+      var(--bg-tertiary) 50%,
+      var(--bg-secondary) 75%);
+  --skeleton-bg-size: 200px 100%;
+}
+
+[data-theme="dark"] {
+  --skeleton-bg: linear-gradient(90deg,
+      var(--bg-secondary) 25%,
+      var(--bg-tertiary) 50%,
+      var(--bg-secondary) 75%);
+}
+
+.skeleton-shimmer {
+  background: var(--skeleton-bg);
+  background-size: var(--skeleton-bg-size);
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Enhanced micro-interactions */
+.file-card,
+.card {
+  will-change: transform, box-shadow;
+}
+
+.btn-icon {
+  will-change: transform, background-color;
+}
+
+/* Smooth transitions for route changes */
+router-outlet+* {
+  display: block;
+  animation: routeSlideIn 0.4s ease-out;
+}
+
+@keyframes routeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Enhanced Header Animations */
