@@ -1,6 +1,7 @@
 // src/app/shared/components/autocomplete-input/autocomplete-input.component.scss
 .input-wrapper {
   position: relative;
+  z-index: 1;
 }
 
 .form-input {
@@ -43,6 +44,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 10;
+  /* Add this line */
 
   &:hover {
     background: var(--bg-tertiary);
