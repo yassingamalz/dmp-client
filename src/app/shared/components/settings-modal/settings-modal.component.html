@@ -1,0 +1,426 @@
+<!-- src/app/shared/components/settings-modal/settings-modal.component.html -->
+<div class="settings-overlay" [class.show]="isOpen" (click)="closeModal()">
+    <div class="settings-modal" (click)="$event.stopPropagation()">
+        <div class="settings-header">
+            <div class="settings-title">
+                <div class="settings-icon">
+                    <i class="bi bi-gear-fill"></i>
+                </div>
+                <h2>Impostazioni</h2>
+            </div>
+            <button class="close-btn" (click)="closeModal()" title="Chiudi">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="settings-body">
+            <div class="settings-sidebar">
+                <nav class="settings-nav">
+                    <button *ngFor="let tab of tabs" class="nav-item" [class.active]="activeTab === tab.id"
+                        (click)="selectTab(tab.id)">
+                        <i [class]="'bi ' + tab.icon"></i>
+                        <span>{{ tab.label }}</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div class="settings-content">
+                <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+
+                    <!-- File Detection Tab -->
+                    <div *ngIf="activeTab === 'fileDetection'" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Impostazioni Rilevamento File</h3>
+                            <p>Configura come l'applicazione rileva e suggerisce i file candidati</p>
+                        </div>
+
+                        <div formGroupName="fileDetection" class="settings-section">
+                            <!-- Watch Folder -->
+                            <div class="setting-group">
+                                <label class="setting-label">Percorso Cartella Monitorata</label>
+                                <div class="folder-input-group">
+                                    <input type="text" class="form-input" formControlName="watchFolderPath"
+                                        placeholder="Seleziona cartella da monitorare" readonly>
+                                    <button type="button" class="browse-folder-btn" (click)="onFolderSelect()">
+                                        <i class="bi bi-folder2-open"></i>
+                                        Sfoglia
+                                    </button>
+                                    <input #folderInput type="file" webkitdirectory style="display: none"
+                                        (change)="onFolderSelected($event)">
+                                </div>
+                                <small class="setting-hint">Scegli la cartella locale da monitorare per i nuovi file di
+                                    misurazione</small>
+                            </div>
+
+                            <!-- File Extensions -->
+                            <div class="setting-group">
+                                <label class="setting-label">Estensioni File Abilitate</label>
+                                <div class="checkbox-grid">
+                                    <label *ngFor="let ext of fileExtensions" class="checkbox-item">
+                                        <input type="checkbox" [checked]="isExtensionEnabled(ext.value)"
+                                            (change)="onExtensionToggle(ext.value, $event)">
+                                        <span class="checkbox-label">{{ ext.label }}</span>
+                                    </label>
+                                </div>
+                                <small class="setting-hint">Seleziona quali tipi di file devono essere monitorati e
+                                    suggeriti</small>
+                            </div>
+
+                            <!-- Scan Frequency -->
+                            <div class="setting-group">
+                                <label class="setting-label">Frequenza Scansione</label>
+                                <select class="form-select" formControlName="scanFrequency">
+                                    <option *ngFor="let option of scanFrequencyOptions" [value]="option.value">
+                                        {{ option.label }}
+                                    </option>
+                                </select>
+                                <small class="setting-hint">Quanto spesso controllare i nuovi file nella cartella
+                                    monitorata</small>
+                            </div>
+
+                            <!-- Toggle Settings -->
+                            <div class="setting-group">
+                                <div class="toggle-setting">
+                                    <div class="toggle-info">
+                                        <label class="setting-label">Includi Sottocartelle</label>
+                                        <small class="setting-hint">Scansiona le sottocartelle per i file
+                                            candidati</small>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" formControlName="includeSubdirectories"
+                                            id="includeSubdirs">
+                                        <label for="includeSubdirs" class="toggle-label"></label>
+                                    </div>
+                                </div>
+
+                                <div class="toggle-setting">
+                                    <div class="toggle-info">
+                                        <label class="setting-label">Aggiungi Candidati Automaticamente</label>
+                                        <small class="setting-hint">Suggerisci automaticamente i nuovi file appena
+                                            appaiono</small>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" formControlName="autoAddCandidates" id="autoAdd">
+                                        <label for="autoAdd" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Machine Tab -->
+                    <div *ngIf="activeTab === 'machine'" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Configurazione Macchina</h3>
+                            <p>Configura le impostazioni della tua macchina di misurazione</p>
+                        </div>
+
+                        <div formGroupName="machine" class="settings-section">
+                            <div class="setting-group">
+                                <label class="setting-label">ID Macchina</label>
+                                <input type="text" class="form-input" formControlName="machineId"
+                                    placeholder="es. CG008668">
+                                <small class="setting-hint">Identificativo univoco per questa macchina</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Nome Macchina</label>
+                                <input type="text" class="form-input" formControlName="machineName"
+                                    placeholder="es. Zeiss Prismo 5">
+                                <small class="setting-hint">Nome visualizzato per questa macchina</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Tipo Macchina</label>
+                                <select class="form-select" formControlName="machineType">
+                                    <option *ngFor="let type of machineTypeOptions" [value]="type.value">
+                                        {{ type.label }}
+                                    </option>
+                                </select>
+                                <small class="setting-hint">Tipo di dispositivo di misurazione</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Cartella Output Predefinita</label>
+                                <input type="text" class="form-input" formControlName="outputFolder"
+                                    placeholder="/measurements">
+                                <small class="setting-hint">Posizione DMP predefinita per l'esportazione</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="toggle-setting">
+                                    <div class="toggle-info">
+                                        <label class="setting-label">Macchina Attiva</label>
+                                        <small class="setting-hint">Abilita/disabilita questa macchina per le
+                                            operazioni</small>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" formControlName="isActive" id="machineActive">
+                                        <label for="machineActive" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Export Tab -->
+                    <div *ngIf="activeTab === 'export'" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Comportamento Esportazione</h3>
+                            <p>Configura come i file vengono esportati nel sistema DMP</p>
+                        </div>
+
+                        <div formGroupName="export" class="settings-section">
+                            <div class="setting-group">
+                                <label class="setting-label">Azione Predefinita</label>
+                                <div class="radio-group">
+                                    <label class="radio-item">
+                                        <input type="radio" formControlName="defaultAction" value="copy">
+                                        <span class="radio-label">Copia file (mantieni originale)</span>
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" formControlName="defaultAction" value="move">
+                                        <span class="radio-label">Sposta file (rimuovi originale)</span>
+                                    </label>
+                                </div>
+                                <small class="setting-hint">Se copiare o spostare i file durante l'esportazione</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Strategia Riempimento Automatico</label>
+                                <select class="form-select" formControlName="autoFillStrategy">
+                                    <option value="filename">Estrai dal nome file</option>
+                                    <option value="directory">Estrai dal percorso cartella</option>
+                                    <option value="none">Nessun riempimento automatico</option>
+                                </select>
+                                <small class="setting-hint">Come riempire automaticamente le informazioni
+                                    ordine/fase</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Convenzione Naming File</label>
+                                <input type="text" class="form-input" formControlName="fileNamingConvention"
+                                    [placeholder]="fileNamingPlaceholder">
+                                <small class="setting-hint">Template per i nomi dei file esportati. Variabili
+                                    disponibili: {{ fileNamingVariables }}</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="toggle-setting">
+                                    <div class="toggle-info">
+                                        <label class="setting-label">Mostra Dialoghi di Conferma</label>
+                                        <small class="setting-hint">Visualizza dialoghi di conferma prima delle
+                                            operazioni principali</small>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" formControlName="showConfirmationDialogs"
+                                            id="showConfirms">
+                                        <label for="showConfirms" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Connection Tab -->
+                    <div *ngIf="activeTab === 'connection'" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Impostazioni Connessione</h3>
+                            <p>Configura la connessione al server DMP</p>
+                        </div>
+
+                        <div formGroupName="connection" class="settings-section">
+                            <div class="setting-group">
+                                <label class="setting-label">URL Server</label>
+                                <div class="input-with-action">
+                                    <input type="url" class="form-input" formControlName="serverUrl"
+                                        placeholder="http://localhost:9070">
+                                    <button type="button" class="action-btn" (click)="testConnection()">
+                                        <i class="bi bi-wifi"></i>
+                                        Test
+                                    </button>
+                                </div>
+                                <small class="setting-hint">URL endpoint del server DMP</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Timeout Connessione (ms)</label>
+                                <input type="number" class="form-input" formControlName="connectionTimeout" min="5000"
+                                    max="120000" step="1000">
+                                <small class="setting-hint">Timeout richiesta in millisecondi (5000-120000)</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Tentativi di Riconnessione</label>
+                                <input type="number" class="form-input" formControlName="retryAttempts" min="1"
+                                    max="10">
+                                <small class="setting-hint">Numero di tentativi di riconnessione in caso di
+                                    errore</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="toggle-setting">
+                                    <div class="toggle-info">
+                                        <label class="setting-label">Riconnessione Automatica</label>
+                                        <small class="setting-hint">Tenta automaticamente di riconnettersi quando la
+                                            connessione si perde</small>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" formControlName="autoReconnect" id="autoReconnect">
+                                        <label for="autoReconnect" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UI Tab -->
+                    <div *ngIf="activeTab === 'ui'" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Interfaccia Utente</h3>
+                            <p>Personalizza l'aspetto e il comportamento dell'applicazione</p>
+                        </div>
+
+                        <div formGroupName="ui" class="settings-section">
+                            <div class="setting-group">
+                                <label class="setting-label">Tema</label>
+                                <div class="radio-group">
+                                    <label class="radio-item">
+                                        <input type="radio" formControlName="theme" value="light">
+                                        <span class="radio-label">Tema chiaro</span>
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" formControlName="theme" value="dark">
+                                        <span class="radio-label">Tema scuro</span>
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" formControlName="theme" value="auto">
+                                        <span class="radio-label">Automatico (preferenza sistema)</span>
+                                    </label>
+                                </div>
+                                <small class="setting-hint">Scegli il tuo schema di colori preferito</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Lingua</label>
+                                <select class="form-select" formControlName="language">
+                                    <option *ngFor="let lang of languageOptions" [value]="lang.value">
+                                        {{ lang.label }}
+                                    </option>
+                                </select>
+                                <small class="setting-hint">Lingua dell'interfaccia</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Intervallo Aggiornamento Automatico (ms)</label>
+                                <input type="number" class="form-input" formControlName="autoRefreshInterval"
+                                    min="10000" max="300000" step="5000">
+                                <small class="setting-hint">Intervallo di aggiornamento dashboard in
+                                    millisecondi</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="toggle-setting">
+                                    <div class="toggle-info">
+                                        <label class="setting-label">Abilita Notifiche</label>
+                                        <small class="setting-hint">Mostra notifiche toast per le operazioni</small>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" formControlName="enableNotifications" id="enableNotifs">
+                                        <label for="enableNotifs" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Tab -->
+                    <div *ngIf="activeTab === 'advanced'" class="tab-content">
+                        <div class="tab-header">
+                            <h3>Impostazioni Avanzate</h3>
+                            <p>Opzioni di configurazione avanzate per utenti esperti</p>
+                        </div>
+
+                        <div formGroupName="advanced" class="settings-section">
+                            <div class="setting-group">
+                                <label class="setting-label">Dimensione Batch</label>
+                                <input type="number" class="form-input" formControlName="batchSize" min="1" max="100">
+                                <small class="setting-hint">Numero di file da elaborare in ogni batch</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Max Operazioni Concorrenti</label>
+                                <input type="number" class="form-input" formControlName="maxConcurrentOperations"
+                                    min="1" max="20">
+                                <small class="setting-hint">Numero massimo di operazioni simultanee</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Durata Cache (ms)</label>
+                                <input type="number" class="form-input" formControlName="cacheDuration" min="60000"
+                                    max="86400000" step="60000">
+                                <small class="setting-hint">Quanto tempo mantenere i dati in cache in
+                                    millisecondi</small>
+                            </div>
+
+                            <div class="setting-group">
+                                <div class="toggle-setting">
+                                    <div class="toggle-info">
+                                        <label class="setting-label">Modalità Debug</label>
+                                        <small class="setting-hint">Abilita logging dettagliato e informazioni di
+                                            debug</small>
+                                    </div>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" formControlName="debugMode" id="debugMode">
+                                        <label for="debugMode" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Gestione Dati</label>
+                                <div class="action-buttons">
+                                    <button type="button" class="btn btn-secondary" (click)="clearCache()">
+                                        <i class="bi bi-trash"></i>
+                                        Svuota Cache
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" (click)="exportSettings()">
+                                        <i class="bi bi-download"></i>
+                                        Esporta Impostazioni
+                                    </button>
+                                    <label class="btn btn-secondary import-btn">
+                                        <i class="bi bi-upload"></i>
+                                        Importa Impostazioni
+                                        <input type="file" accept=".json" (change)="onImportSettings($event)"
+                                            style="display: none;">
+                                    </label>
+                                </div>
+                                <small class="setting-hint">Gestisci i dati dell'applicazione e le impostazioni</small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="settings-footer">
+            <!-- Reset button on the left -->
+            <button type="button" class="btn btn-secondary reset-btn" (click)="resetToDefaults()">
+                <i class="bi bi-arrow-clockwise"></i>
+                <span>Ripristina Predefiniti</span>
+            </button>
+
+            <!-- Action buttons on the right -->
+            <div class="footer-actions">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">
+                    <span>Annulla</span>
+                </button>
+                <button type="button" class="btn btn-primary" (click)="saveSettings()"
+                    [disabled]="settingsForm.invalid">
+                    <i class="bi bi-check-lg"></i>
+                    <span>Salva Impostazioni</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

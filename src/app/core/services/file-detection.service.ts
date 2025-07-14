@@ -1,8 +1,9 @@
 // src/app/core/services/file-detection.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { delay, takeUntil } from 'rxjs/operators';
 import { CandidateFile } from '../models/candidate-file';
+import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -42,14 +43,21 @@ export class FileDetectionService {
   ];
 
   private candidateFiles = new BehaviorSubject<CandidateFile[]>([...this.mockFiles]);
-  private watchDirectory = new BehaviorSubject<string>('C:\\MachineFiles\\CG008668');
+  private watchDirectory = new BehaviorSubject<string>('');
   private removedFiles = new Set<string>(); // Track files that were added to export queue
 
   public candidateFiles$ = this.candidateFiles.asObservable();
   public watchDirectory$ = this.watchDirectory.asObservable();
 
-  constructor() {
+  constructor(private settingsService: SettingsService) {
     this.initializeBidirectionalSync();
+    
+    // Listen to settings changes and update watch directory
+    this.settingsService.settings$.subscribe(settings => {
+      if (settings?.fileDetection?.watchFolderPath) {
+        this.watchDirectory.next(settings.fileDetection.watchFolderPath);
+      }
+    });
   }
 
   getCandidateFiles(): Observable<CandidateFile[]> {
@@ -79,6 +87,8 @@ export class FileDetectionService {
 
   setWatchDirectory(path: string): void {
     this.watchDirectory.next(path);
+    // Update the settings with the new path
+    this.settingsService.updateFileDetectionSettings({ watchFolderPath: path });
     // Simulate rescanning directory
     this.refreshCandidates();
   }
@@ -86,8 +96,18 @@ export class FileDetectionService {
   refreshCandidates(): void {
     // Simulate file discovery with slight delay
     setTimeout(() => {
-      // Only show files that weren't moved to export queue
-      const availableFiles = this.mockFiles.filter(file => !this.removedFiles.has(file.name));
+      // Get enabled extensions from settings
+      const settings = this.settingsService.getSettings();
+      const enabledExtensions = settings?.fileDetection?.enabledExtensions || [];
+      
+      // Filter files based on enabled extensions and removed files
+      const availableFiles = this.mockFiles.filter(file => {
+        const isValidExtension = enabledExtensions.some(ext => 
+          file.name.toLowerCase().endsWith(ext.toLowerCase())
+        );
+        return isValidExtension && !this.removedFiles.has(file.name);
+      });
+      
       this.candidateFiles.next([...availableFiles]);
     }, 500);
   }

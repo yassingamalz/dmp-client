@@ -9,6 +9,7 @@ import { ToastComponent } from './components/toast/toast.component';
 import { ModalComponent } from './components/modal/modal.component';
 import { AutocompleteInputComponent } from './components/autocomplete-input/autocomplete-input.component';
 import { QrScannerModalComponent } from './components/qr-scanner-modal/qr-scanner-modal.component';
+import { SettingsModalComponent } from './components/settings-modal/settings-modal.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { QrScannerModalComponent } from './components/qr-scanner-modal/qr-scanne
     ToastComponent,
     ModalComponent,
     AutocompleteInputComponent,
-    QrScannerModalComponent
+    QrScannerModalComponent,
+    SettingsModalComponent
   ],
   imports: [
     CommonModule,
@@ -30,6 +32,7 @@ import { QrScannerModalComponent } from './components/qr-scanner-modal/qr-scanne
     ModalComponent,
     AutocompleteInputComponent,
     QrScannerModalComponent,
+    SettingsModalComponent,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,

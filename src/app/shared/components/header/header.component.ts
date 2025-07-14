@@ -1,7 +1,8 @@
 // src/app/shared/components/header/header.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../../core/services/theme.service';
+import { SettingsModalComponent } from '../settings-modal/settings-modal.component';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -11,6 +12,8 @@ import { Observable } from 'rxjs';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  @ViewChild(SettingsModalComponent) settingsModal!: SettingsModalComponent;
+  
   currentTheme$: Observable<'light' | 'dark'>;
   currentRoute = '/export';
 
@@ -38,11 +41,15 @@ export class HeaderComponent implements OnInit {
       this.router.navigate([route]);
     } else {
       // Handle non-existing routes gracefully
-      console.log(`Navigation to ${route} - Route not implemented yet`);
+      console.log(`Navigazione a ${route} - Route non ancora implementata`);
     }
   }
 
   toggleTheme(): void {
     this.themeService.toggleTheme();
+  }
+
+  openSettings(): void {
+    this.settingsModal.openModal();
   }
 }

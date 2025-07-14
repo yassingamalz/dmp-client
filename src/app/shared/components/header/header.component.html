@@ -13,7 +13,7 @@
 
       <div class="header-status">
         <div class="status-item">
-          <span class="status-label">Machine</span>
+          <span class="status-label">Macchina</span>
           <span class="status-value">{{ machineInfo.name }}</span>
         </div>
 
@@ -23,7 +23,7 @@
         </div>
 
         <div class="status-item">
-          <span class="status-label">Status</span>
+          <span class="status-label">Stato</span>
           <span class="status-value">
             <div class="status-indicator">
               <i class="bi bi-wifi status-icon online"></i>
@@ -50,33 +50,36 @@
       <div class="nav-tabs">
         <button class="nav-tab" [class.active]="currentRoute === '/export'" (click)="navigateTo('/export')">
           <i class="bi bi-upload"></i>
-          <span>Export</span>
+          <span>Esportazione</span>
         </button>
         <button class="nav-tab" [class.active]="currentRoute === '/files'" (click)="navigateTo('/files')">
           <i class="bi bi-folder"></i>
-          <span>Files</span>
+          <span>File</span>
         </button>
         <button class="nav-tab" [class.active]="currentRoute === '/reports'" (click)="navigateTo('/reports')">
           <i class="bi bi-bar-chart"></i>
-          <span>Reports</span>
+          <span>Report</span>
         </button>
         <button class="nav-tab" [class.active]="currentRoute === '/statistics'" (click)="navigateTo('/statistics')">
           <i class="bi bi-graph-up"></i>
-          <span>Statistics</span>
+          <span>Statistiche</span>
         </button>
       </div>
 
       <div class="nav-actions">
-        <button class="action-btn" title="Settings">
+        <button class="action-btn" (click)="openSettings()" title="Impostazioni">
           <i class="bi bi-gear"></i>
         </button>
-        <button class="action-btn" title="Notifications">
+        <button class="action-btn" title="Notifiche">
           <i class="bi bi-bell"></i>
         </button>
-        <button class="action-btn" title="Help">
+        <button class="action-btn" title="Aiuto">
           <i class="bi bi-question-circle"></i>
         </button>
       </div>
     </div>
   </nav>
 </header>
+
+<!-- Settings Modal -->
+<app-settings-modal></app-settings-modal>
