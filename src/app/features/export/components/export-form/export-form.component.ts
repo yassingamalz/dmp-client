@@ -82,7 +82,7 @@ export class ExportFormComponent implements OnInit, OnDestroy {
               value: wo.id,
               label: wo.id,
               meta: wo.description,
-              badge: 'ERP'
+              badge: 'C3'
             }));
             this.orderLoading = false;
           },
@@ -107,7 +107,7 @@ export class ExportFormComponent implements OnInit, OnDestroy {
             value: wo.id,
             label: wo.id,
             meta: wo.description,
-            badge: 'ERP'
+            badge: 'C3'
           }));
           this.orderLoading = false;
         },
@@ -165,7 +165,7 @@ export class ExportFormComponent implements OnInit, OnDestroy {
           this.phaseSuggestions = phases.map(phase => ({
             value: phase,
             label: phase,
-            badge: 'ERP'
+            badge: 'C3'
           }));
         } else {
           this.phaseSuggestions = [];

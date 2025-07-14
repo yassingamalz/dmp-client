@@ -8,6 +8,7 @@
     opacity: 0;
     transform: translateX(-20px);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -16,7 +17,8 @@
 
 .card {
   position: relative;
-  overflow: visible; 
+  overflow: visible;
+  z-index: 100;
 }
 
 .animation-clipper {
@@ -25,8 +27,8 @@
   left: 0;
   width: 100%;
   height: 2px;
-  overflow: hidden; 
-  pointer-events: none; 
+  overflow: hidden;
+  pointer-events: none;
   z-index: 10;
 }
 
@@ -44,6 +46,7 @@
   0% {
     left: -100%;
   }
+
   100% {
     left: 100%;
   }
