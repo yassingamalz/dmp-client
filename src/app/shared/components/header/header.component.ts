@@ -1,9 +1,10 @@
 // src/app/shared/components/header/header.component.ts
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { ThemeService } from '../../../core/services/theme.service';
 import { SettingsModalComponent } from '../settings-modal/settings-modal.component';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -11,11 +12,12 @@ import { Observable } from 'rxjs';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild(SettingsModalComponent) settingsModal!: SettingsModalComponent;
   
   currentTheme$: Observable<'light' | 'dark'>;
   currentRoute = '/export';
+  private destroy$ = new Subject<void>();
 
   machineInfo = {
     id: 'CG008668',
@@ -31,7 +33,23 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Set initial route
     this.currentRoute = this.router.url;
+    
+    // Listen for route changes to keep tab selection in sync
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((event) => {
+        this.currentRoute = event.urlAfterRedirects;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   navigateTo(route: string): void {
