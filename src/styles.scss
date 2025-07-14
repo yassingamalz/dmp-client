@@ -33,6 +33,56 @@
   --skeleton-bg-size: 200px 100%;
 }
 
+:root {
+  /* Enhanced Toast Colors - Light Theme */
+  --toast-success-primary: #10b981;
+  --toast-success-secondary: #059669;
+  --toast-success-bg: rgba(16, 185, 129, 0.1);
+  
+  --toast-error-primary: #ef4444;
+  --toast-error-secondary: #dc2626;
+  --toast-error-bg: rgba(239, 68, 68, 0.1);
+  
+  --toast-warning-primary: #f59e0b;
+  --toast-warning-secondary: #d97706;
+  --toast-warning-bg: rgba(245, 158, 11, 0.1);
+  
+  --toast-info-primary: #3b82f6;
+  --toast-info-secondary: #2563eb;
+  --toast-info-bg: rgba(59, 130, 246, 0.1);
+  
+  /* Toast Shadow Colors */
+  --toast-success-shadow: rgba(16, 185, 129, 0.25);
+  --toast-error-shadow: rgba(239, 68, 68, 0.25);
+  --toast-warning-shadow: rgba(245, 158, 11, 0.25);
+  --toast-info-shadow: rgba(59, 130, 246, 0.25);
+}
+
+[data-theme="dark"] {
+  /* Enhanced Toast Colors - Dark Theme */
+  --toast-success-primary: #34d399;
+  --toast-success-secondary: #10b981;
+  --toast-success-bg: rgba(52, 211, 153, 0.15);
+  
+  --toast-error-primary: #f87171;
+  --toast-error-secondary: #ef4444;
+  --toast-error-bg: rgba(248, 113, 113, 0.15);
+  
+  --toast-warning-primary: #fbbf24;
+  --toast-warning-secondary: #f59e0b;
+  --toast-warning-bg: rgba(251, 191, 36, 0.15);
+  
+  --toast-info-primary: #60a5fa;
+  --toast-info-secondary: #3b82f6;
+  --toast-info-bg: rgba(96, 165, 250, 0.15);
+  
+  /* Toast Shadow Colors - Dark */
+  --toast-success-shadow: rgba(52, 211, 153, 0.3);
+  --toast-error-shadow: rgba(248, 113, 113, 0.3);
+  --toast-warning-shadow: rgba(251, 191, 36, 0.3);
+  --toast-info-shadow: rgba(96, 165, 250, 0.3);
+}
+
 [data-theme="dark"] {
   --bg-primary: #1a1d23;
   --bg-secondary: #2d3748;

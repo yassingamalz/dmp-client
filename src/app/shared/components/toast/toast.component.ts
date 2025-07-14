@@ -88,10 +88,31 @@ export class ToastComponent implements OnInit, OnDestroy {
   getIconClass(type: string): string {
     const iconMap: { [key: string]: string } = {
       success: 'bi-check-circle-fill',
-      error: 'bi-x-circle-fill',
+      error: 'bi-x-octagon-fill',
       warning: 'bi-exclamation-triangle-fill',
       info: 'bi-info-circle-fill'
     };
     return iconMap[type] || 'bi-info-circle-fill';
+  }
+
+  getToastTypeClass(type: string): string {
+    // Add additional classes for enhanced styling
+    const classMap: { [key: string]: string } = {
+      success: 'toast-success',
+      error: 'toast-error',
+      warning: 'toast-warning',
+      info: 'toast-info'
+    };
+    return classMap[type] || 'toast-info';
+  }
+
+  getProgressBarClass(type: string): string {
+    const progressMap: { [key: string]: string } = {
+      success: 'progress-success',
+      error: 'progress-error',
+      warning: 'progress-warning',
+      info: 'progress-info'
+    };
+    return progressMap[type] || 'progress-info';
   }
 }
