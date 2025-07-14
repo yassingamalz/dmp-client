@@ -178,7 +178,7 @@
 .file-icon {
   width: 32px;
   height: 32px;
-  background: var(--accent-secondary);
+  background: var(--accent-primary);
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -194,7 +194,7 @@
     position: absolute;
     inset: 0;
     border-radius: 6px;
-    background: linear-gradient(45deg, var(--accent-secondary), var(--ferrari-red));
+    background: linear-gradient(90deg, var(--success-color), var(--success-color));
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: -1;
