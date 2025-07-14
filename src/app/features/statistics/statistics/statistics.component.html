@@ -1,1 +1,113 @@
-<p>statistics works!</p>
+<!-- src/app/features/statistics/statistics/statistics.component.html -->
+<div class="statistics-view">
+  <!-- Header Section -->
+  <div class="stats-header">
+    <div class="header-content">
+      <div class="header-info">
+        <div class="header-icon">
+          <i class="bi bi-speedometer2"></i>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title">Performance Macchina</h1>
+          <p class="page-subtitle">
+            Monitoraggio prestazioni per <strong>{{ currentMachineName || 'Macchina Corrente' }}</strong>
+          </p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <!-- Period Selector -->
+        <div class="period-selector">
+          <button 
+            *ngFor="let period of periods" 
+            class="period-btn"
+            [class.active]="selectedPeriod === period.key"
+            (click)="onPeriodChange(period.key)"
+            [disabled]="loading">
+            {{ period.label }}
+          </button>
+        </div>
+        
+        <button class="btn btn-primary" (click)="refreshStatistics()" [disabled]="loading" title="Aggiorna Statistiche">
+          <i class="bi" [class]="loading ? 'bi-arrow-repeat spin' : 'bi-arrow-clockwise'"></i>
+          <span>Aggiorna</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Performance Card -->
+  <div class="performance-container">
+    <app-machine-performance-card 
+      [machineStats]="(currentMachineStats$ | async)"
+      [selectedPeriod]="selectedPeriod"
+      [loading]="loading">
+    </app-machine-performance-card>
+  </div>
+
+  <!-- No Machine Configured -->
+  <div *ngIf="!loading && !currentMachineId" class="no-machine-state">
+    <div class="no-machine-icon">
+      <i class="bi bi-exclamation-triangle"></i>
+    </div>
+    <h3>Macchina Non Configurata</h3>
+    <p>Configura i dettagli della tua macchina nelle impostazioni per visualizzare le statistiche di performance.</p>
+    <button class="btn btn-primary" (click)="openMachineSettings()">
+      <i class="bi bi-gear"></i>
+      Apri Impostazioni
+    </button>
+  </div>
+
+  <!-- No Statistics Found -->
+  <div *ngIf="!loading && currentMachineId && !(currentMachineStats$ | async)" class="no-stats-state">
+    <div class="no-stats-icon">
+      <i class="bi bi-bar-chart"></i>
+    </div>
+    <h3>Nessuna Statistica Disponibile</h3>
+    <p>Non sono disponibili statistiche per la macchina <strong>{{ currentMachineName }}</strong> nel periodo selezionato.</p>
+    <button class="btn btn-primary" (click)="refreshStatistics()" [disabled]="loading">
+      <i class="bi bi-arrow-clockwise"></i>
+      Ricarica Statistiche
+    </button>
+  </div>
+
+  <!-- Recent Errors Section -->
+  <div *ngIf="!loading && (recentErrors$ | async) as errors" class="recent-errors-section">
+    <div class="card" *ngIf="errors.length > 0">
+      <div class="card-header">
+        <div class="card-icon error">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h3 class="card-title">Errori Recenti - {{ currentMachineName }}</h3>
+        <span class="error-count">{{ errors.length }}</span>
+      </div>
+      <div class="card-body">
+        <div class="error-list">
+          <div *ngFor="let error of errors.slice(0, 8)" class="error-item">
+            <div class="error-info">
+              <div class="error-file">{{ error.fileName }}</div>
+              <div class="error-meta">
+                {{ error.timestamp | date:'short' }}
+                <span *ngIf="error.order"> • Ordine: {{ error.order }}</span>
+                <span *ngIf="error.phase"> • Fase: {{ error.phase }}</span>
+              </div>
+            </div>
+            <div class="error-reason">{{ error.errorReason }}</div>
+          </div>
+        </div>
+        <div *ngIf="errors.length > 8" class="error-footer">
+          <p class="error-more">E altri {{ errors.length - 8 }} errori nel periodo selezionato...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Errors State -->
+    <div *ngIf="errors.length === 0" class="no-errors-state">
+      <div class="no-errors-icon">
+        <i class="bi bi-check-circle"></i>
+      </div>
+      <h4>Nessun Errore Rilevato</h4>
+      <p>Ottimo! Non ci sono errori registrati per il periodo selezionato.</p>
+    </div>
+  </div>
+</div>

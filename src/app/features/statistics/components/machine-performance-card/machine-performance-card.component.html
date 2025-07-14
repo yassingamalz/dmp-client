@@ -1,0 +1,153 @@
+<!-- src/app/features/statistics/components/machine-performance-card/machine-performance-card.component.html -->
+<div class="performance-card" [class.animated]="animationStarted">
+  <!-- Performance Summary -->
+  <div class="performance-summary">
+    <!-- Loading Skeleton Summary -->
+    <div *ngIf="loading" class="skeleton-summary">
+      <div *ngFor="let item of [1,2,3,4]" 
+           class="skeleton-summary-item"
+           [style.animation-delay]="(item * 0.1) + 's'">
+        <div class="skeleton-summary-icon"></div>
+        <div class="skeleton-summary-details">
+          <div class="skeleton-summary-value"></div>
+          <div class="skeleton-summary-label"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actual Summary -->
+    <div *ngIf="!loading && machineStats" class="actual-summary">
+      <div class="summary-item">
+        <div class="summary-icon processing">
+          <i class="bi bi-gear-fill"></i>
+        </div>
+        <div class="summary-details">
+          <span class="summary-value">{{ machineStats[selectedPeriod].processed | number }}</span>
+          <span class="summary-label">File Elaborati</span>
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-icon success">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="summary-details">
+          <span class="summary-value">{{ machineStats[selectedPeriod].done | number }}</span>
+          <span class="summary-label">Completati</span>
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-icon error">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <div class="summary-details">
+          <span class="summary-value">{{ machineStats[selectedPeriod].errors | number }}</span>
+          <span class="summary-label">Errori</span>
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-icon rate">
+          <i class="bi bi-speedometer2"></i>
+        </div>
+        <div class="summary-details">
+          <span class="summary-value">{{ machineStats[selectedPeriod].successRate }}%</span>
+          <span class="summary-label">Tasso Successo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Performance Grid -->
+  <div class="performance-grid">
+    <!-- Loading Skeleton Performance -->
+    <div *ngIf="loading" class="skeleton-performance">
+      <div *ngFor="let item of [1,2,3,4]; let i = index" 
+           class="skeleton-performance-item"
+           [style.animation-delay]="(i * 0.15) + 's'">
+        <div class="skeleton-speedometer-container">
+          <div class="skeleton-speedometer"></div>
+          <div class="skeleton-attribute-name"></div>
+        </div>
+        <div class="skeleton-sub-attributes">
+          <div class="skeleton-sub-attribute">
+            <div class="skeleton-sub-name"></div>
+            <div class="skeleton-sub-gauge"></div>
+            <div class="skeleton-sub-value"></div>
+          </div>
+          <div class="skeleton-sub-attribute">
+            <div class="skeleton-sub-name"></div>
+            <div class="skeleton-sub-gauge"></div>
+            <div class="skeleton-sub-value"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actual Performance -->
+    <div *ngIf="!loading && machineStats" class="actual-performance">
+      <div 
+        *ngFor="let attribute of performanceAttributes; let i = index" 
+        class="performance-attribute"
+        [style.animation-delay]="(i * 0.15) + 's'">
+        
+        <!-- Speedometer Circle -->
+        <div class="speedometer-container">
+          <div class="speedometer" [class]="getAttributeColor(attribute.value)">
+            <svg class="speedometer-svg" viewBox="0 0 120 120">
+              <!-- Background track -->
+              <circle
+                class="speedometer-track"
+                cx="60"
+                cy="60"
+                r="40"
+                fill="none"
+                stroke="var(--bg-tertiary)"
+                stroke-width="8">
+              </circle>
+              
+              <!-- Animated fill -->
+              <circle
+                class="speedometer-fill"
+                cx="60"
+                cy="60"
+                r="40"
+                fill="none"
+                stroke-width="8"
+                transform="rotate(-90 60 60)"
+                [style.stroke-dasharray]="251.2"
+                [style.stroke-dashoffset]="animationStarted ? (251.2 - (attribute.value * 2.512)) : 251.2">
+              </circle>
+            </svg>
+            
+            <!-- Animated speedometer value -->
+            <div class="speedometer-value">
+              <span class="value-number">{{ attribute.displayValue }}</span>
+            </div>
+          </div>
+          <h4 class="attribute-name">{{ attribute.name }}</h4>
+        </div>
+
+        <!-- Sub-attributes -->
+        <div class="sub-attributes">
+          <div 
+            *ngFor="let subAttr of attribute.subAttributes; let j = index" 
+            class="sub-attribute"
+            [style.animation-delay]="((i * 0.15) + (j * 0.05) + 0.3) + 's'">
+            
+            <span class="sub-name">{{ subAttr.name }}</span>
+            <div class="sub-gauge">
+              <div 
+                class="sub-fill" 
+                [class]="getAttributeColor(subAttr.value)"
+                [style.width.%]="animationStarted ? subAttr.value : 0">
+              </div>
+            </div>
+            <span class="sub-value">{{ subAttr.value }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

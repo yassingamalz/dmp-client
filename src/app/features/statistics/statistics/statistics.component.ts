@@ -1,104 +1,48 @@
-// src/app/features/statistics/statistics.component.ts
+// src/app/features/statistics/statistics/statistics.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subject, takeUntil, finalize } from 'rxjs';
+import { Observable, Subject, takeUntil, finalize, map } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import { ToastService } from '../../../core/services/toast.service';
-import { ProcessingStatistics } from '../../../core/models/statistics';
+import { SettingsService } from '../../../core/services/settings.service';
+import { MachineStatistics, ErrorSummary } from '../../../core/models/statistics';
 
 @Component({
   selector: 'app-statistics',
-  template: `
-    <div class="statistics-view">
-      <div class="stats-header">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon">
-              <i class="bi bi-graph-up"></i>
-            </div>
-            <h2 class="card-title">Statistiche Elaborazione</h2>
-          </div>
-          <div class="card-body">
-            <div class="stats-overview">
-              <div class="overview-item">
-                <div class="overview-label">Macchine Totali</div>
-                <div class="overview-value">{{ (statistics$ | async)?.totalMachines || 0 }}</div>
-              </div>
-              <div class="overview-item">
-                <div class="overview-label">Macchine Attive</div>
-                <div class="overview-value success">{{ (statistics$ | async)?.activeMachines || 0 }}</div>
-              </div>
-              <div class="overview-item">
-                <div class="overview-label">File Totali</div>
-                <div class="overview-value">{{ (statistics$ | async)?.totalFiles || 0 }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <app-stats-dashboard 
-        [statistics]="statistics$ | async"
-        [loading]="loading">
-      </app-stats-dashboard>
-    </div>
-  `,
   standalone: false,
-  styles: [`
-    .statistics-view {
-      animation: fadeIn 0.3s ease;
-    }
-
-    .stats-header {
-      margin-bottom: 2rem;
-    }
-
-    .stats-overview {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 2rem;
-      text-align: center;
-    }
-
-    .overview-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .overview-label {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    .overview-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-
-      &.success {
-        color: var(--success-color);
-      }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  `]
+  templateUrl: './statistics.component.html',
+  styleUrls: ['./statistics.component.scss']
 })
 export class StatisticsComponent implements OnInit, OnDestroy {
-  statistics$: Observable<ProcessingStatistics> | undefined;
+  currentMachineStats$: Observable<MachineStatistics | null> | undefined;
+  recentErrors$: Observable<ErrorSummary[]> | undefined;
+  selectedPeriod: 'lastMonth' | 'lastYear' | 'overall' = 'lastMonth';
   loading = true;
+  currentMachineId = '';
+  currentMachineName = '';
+
   private destroy$ = new Subject<void>();
+
+  periods = [
+    { key: 'lastMonth' as const, label: 'Ultimo Mese' },
+    { key: 'lastYear' as const, label: 'Ultimo Anno' },
+    { key: 'overall' as const, label: 'Complessivo' }
+  ];
 
   constructor(
     private apiService: ApiService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private settingsService: SettingsService
   ) { }
 
   ngOnInit(): void {
-    this.loadStatistics();
+    // Get current machine info from settings
+    this.settingsService.settings$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(settings => {
+        this.currentMachineId = settings.machine.machineId;
+        this.currentMachineName = settings.machine.machineName;
+        this.loadCurrentMachineStatistics();
+      });
   }
 
   ngOnDestroy(): void {
@@ -106,18 +50,65 @@ export class StatisticsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private loadStatistics(): void {
+  private loadCurrentMachineStatistics(): void {
+    if (!this.currentMachineId) {
+      this.toastService.showWarning(
+        'Configurazione Mancante',
+        'ID macchina non configurato nelle impostazioni'
+      );
+      this.loading = false;
+      return;
+    }
+
     this.loading = true;
-    this.statistics$ = this.apiService.getProcessingStatistics()
+    
+    // Load statistics for current machine only
+    this.currentMachineStats$ = this.apiService.getMachineStatistics(this.currentMachineId)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => this.loading = false)
       );
 
-    this.statistics$.subscribe({
-      error: () => {
-        this.toastService.showError('Errore Caricamento', 'Impossibile caricare le statistiche');
+    // Load recent errors for current machine
+    this.recentErrors$ = this.apiService.getErrorsByPeriod(this.selectedPeriod)
+      .pipe(
+        map(errors => errors.filter(error => error.machineId === this.currentMachineId)),
+        takeUntil(this.destroy$)
+      );
+
+    // Handle errors
+    this.currentMachineStats$.subscribe({
+      error: (error) => {
+        console.error('Errore caricamento statistiche:', error);
+        this.toastService.showError(
+          'Errore Caricamento',
+          'Impossibile caricare le statistiche della macchina'
+        );
       }
     });
+  }
+
+  onPeriodChange(period: 'lastMonth' | 'lastYear' | 'overall'): void {
+    this.selectedPeriod = period;
+    // Reload errors for new period
+    if (this.currentMachineId) {
+      this.recentErrors$ = this.apiService.getErrorsByPeriod(period)
+        .pipe(
+          map(errors => errors.filter(error => error.machineId === this.currentMachineId)),
+          takeUntil(this.destroy$)
+        );
+    }
+  }
+
+  refreshStatistics(): void {
+    this.loadCurrentMachineStatistics();
+    this.toastService.showInfo('Aggiornamento', 'Statistiche aggiornate');
+  }
+
+  openMachineSettings(): void {
+    this.toastService.showInfo(
+      'Impostazioni Macchina',
+      'Utilizza il menu impostazioni per configurare i dettagli della macchina'
+    );
   }
 }
