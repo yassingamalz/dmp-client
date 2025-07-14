@@ -524,3 +524,12 @@
 :root {
   --ferrari-red-rgb: 13, 110, 253;
 }
+
+.sticky-actions {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}

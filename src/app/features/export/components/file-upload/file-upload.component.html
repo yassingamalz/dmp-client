@@ -1,18 +1,21 @@
 <div class="card">
   <div class="card-header">
+    <div class="sticky-actions" *ngIf="selectedFiles.length > 3">
+      <button class="btn btn-secondary" (click)="clearFiles()" [disabled]="selectedFiles.length === 0 || exporting">
+        <i class="bi bi-trash"></i>
+      </button>
+      <button class="btn btn-primary" [disabled]="!canExport || exporting" (click)="exportFiles()">
+        <i [class]="exporting ? 'bi bi-arrow-repeat' : 'bi bi-upload'"></i>
+      </button>
+    </div>
     <div class="card-icon">
       <i class="bi bi-cloud-upload"></i>
     </div>
     <h2 class="card-title">Caricamento File</h2>
   </div>
   <div class="card-body">
-    <div class="upload-zone" 
-         [class.drag-over]="dragOver" 
-         [class.uploading]="exporting"
-         (dragover)="onDragOver($event)" 
-         (dragleave)="onDragLeave()"
-         (drop)="onDrop($event)" 
-         (click)="openFileDialog()">
+    <div class="upload-zone" [class.drag-over]="dragOver" [class.uploading]="exporting" (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()" (drop)="onDrop($event)" (click)="openFileDialog()">
       <div class="upload-icon">
         <i class="bi" [class]="exporting ? 'bi-arrow-repeat' : 'bi-cloud-arrow-up'"></i>
       </div>
