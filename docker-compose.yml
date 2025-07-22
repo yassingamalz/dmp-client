@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  dmp-client-fe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dmp-client-fe
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=test
+    labels:
+      - "com.dmp.description=DMP Client Frontend for Client Demo"
+      - "com.dmp.version=2.0.0"
