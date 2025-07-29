@@ -1,3 +1,4 @@
+<!-- src/app/shared/components/header/header.component.html (UPDATED) -->
 <header class="header">
   <div class="header-main">
     <div class="header-container">
@@ -56,9 +57,9 @@
           <i class="bi bi-folder"></i>
           <span>File</span>
         </button>
-        <button class="nav-tab" [class.active]="currentRoute === '/reports'" (click)="navigateTo('/reports')">
-          <i class="bi bi-bar-chart"></i>
-          <span>Report</span>
+        <button class="nav-tab" [class.active]="currentRoute === '/machines'" (click)="navigateTo('/machines')">
+          <i class="bi bi-gear-wide-connected"></i>
+          <span>Macchine</span>
         </button>
         <button class="nav-tab" [class.active]="currentRoute === '/statistics'" (click)="navigateTo('/statistics')">
           <i class="bi bi-graph-up"></i>

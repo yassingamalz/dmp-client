@@ -1,0 +1,50 @@
+<!-- src/app/features/machines/components/environment-selector/environment-selector.component.html -->
+<div class="environment-selector">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <i class="bi bi-globe"></i>
+      </div>
+      <h3 class="card-title">Selezione Ambiente</h3>
+    </div>
+    <div class="card-body">
+      <div class="environment-grid" *ngIf="environments$ | async as environments">
+        <div
+          *ngFor="let env of environments"
+          class="environment-card"
+          [class.active]="currentEnvironment === env.name"
+          [class.loading]="loading"
+          (click)="onEnvironmentChange(env.name)">
+          
+          <div class="environment-indicator" [style.background-color]="env.color"></div>
+          
+          <div class="environment-info">
+            <h4 class="environment-name">{{ env.displayName }}</h4>
+            <p class="environment-details">
+              <span class="machine-count">{{ env.machineCount }} macchine</span>
+              <span class="environment-code">{{ env.name }}</span>
+            </p>
+          </div>
+          
+          <div class="environment-status" *ngIf="currentEnvironment === env.name">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
+          
+          <div class="loading-overlay" *ngIf="loading && currentEnvironment === env.name">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="environment-actions">
+        <button 
+          class="btn btn-outline refresh-btn"
+          (click)="onEnvironmentChange(currentEnvironment)"
+          [disabled]="loading">
+          <i class="bi bi-arrow-clockwise"></i>
+          Aggiorna
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

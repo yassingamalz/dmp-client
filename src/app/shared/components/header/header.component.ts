@@ -1,4 +1,4 @@
-// src/app/shared/components/header/header.component.ts
+// src/app/shared/components/header/header.component.ts (UPDATED)
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -54,8 +54,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   navigateTo(route: string): void {
     this.currentRoute = route;
-    // Navigate to existing routes
-    if (route === '/export' || route === '/files' || route === '/statistics') {
+    // Navigate to all available routes including machines
+    if (route === '/export' || route === '/files' || route === '/statistics' || route === '/machines') {
       this.router.navigate([route]);
     } else {
       // Handle non-existing routes gracefully

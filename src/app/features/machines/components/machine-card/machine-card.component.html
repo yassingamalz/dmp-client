@@ -1,0 +1,102 @@
+<!-- src/app/features/machines/components/machine-card/machine-card.component.html -->
+<div class="machine-card" [class.loading]="loading" [class.inactive]="!machine.active">
+  <div class="machine-header">
+    <div class="machine-info">
+      <div class="machine-status-indicator" [style.background-color]="statusColor"></div>
+      <div class="machine-details">
+        <h4 class="machine-name">{{ machine.label }}</h4>
+        <p class="machine-id">{{ machine.machine }}</p>
+      </div>
+    </div>
+    
+    <div class="machine-actions">
+      <div class="status-badge" [style.background-color]="statusColor">
+        {{ statusText }}
+      </div>
+    </div>
+  </div>
+
+  <div class="machine-body">
+    <div class="machine-meta">
+      <div class="meta-item">
+        <i class="bi bi-folder"></i>
+        <span class="meta-label">Output:</span>
+        <span class="meta-value">{{ machine.output }}</span>
+      </div>
+      
+      <div class="meta-item">
+        <i class="bi bi-file-earmark-text"></i>
+        <span class="meta-label">Estensioni:</span>
+        <span class="meta-value">{{ machine.enabledFileExtensions.join(', ') }}</span>
+      </div>
+      
+      <div class="meta-item">
+        <i class="bi bi-clock"></i>
+        <span class="meta-label">Ultima modifica:</span>
+        <span class="meta-value">{{ lastModifiedFormatted }}</span>
+      </div>
+    </div>
+
+    <!-- Group Machine Details -->
+    <div class="group-machines" *ngIf="machine.listaMachine && machine.listaMachine.length > 0">
+      <button 
+        class="details-toggle" 
+        (click)="toggleDetails()"
+        [class.expanded]="showDetails">
+        <i class="bi bi-chevron-down"></i>
+        Macchine del gruppo ({{ machine.listaMachine!.length }})
+      </button>
+      
+      <div class="group-details" *ngIf="showDetails" [@slideInOut]>
+        <div 
+          class="group-machine-item" 
+          *ngFor="let groupMachine of machine.listaMachine"
+          [class.inactive]="!groupMachine.active">
+          <div class="group-machine-info">
+            <div class="group-status-indicator" [class.active]="groupMachine.active"></div>
+            <div class="group-machine-details">
+              <span class="group-machine-name">{{ groupMachine.label }}</span>
+              <span class="group-machine-id">{{ groupMachine.machina }}</span>
+            </div>
+          </div>
+          <div class="group-machine-extensions">
+            {{ groupMachine.enabledFileExtensions.join(', ') }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="machine-footer">
+    <div class="machine-controls">
+      <button 
+        class="btn btn-outline btn-sm"
+        (click)="onViewDetails()"
+        [disabled]="loading">
+        <i class="bi bi-info-circle"></i>
+        Dettagli
+      </button>
+      
+      <div class="toggle-control">
+        <label class="toggle-switch" [class.disabled]="!machine.active || loading">
+          <input 
+            type="checkbox" 
+            [checked]="machine.policyEnabled"
+            [disabled]="!machine.active || loading"
+            (change)="onToggle()">
+          <span class="toggle-slider">
+            <span class="toggle-label">
+              {{ machine.policyEnabled ? 'Attiva' : 'Disattiva' }}
+            </span>
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner"></div>
+    <span class="loading-text">Aggiornamento in corso...</span>
+  </div>
+</div>

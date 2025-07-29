@@ -1,0 +1,106 @@
+<!-- src/app/features/machines/machines/machines.component.html -->
+<div class="machines-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1 class="page-title">
+          <i class="bi bi-gear-wide-connected"></i>
+          Gestione Macchine
+        </h1>
+        <p class="page-description">
+          Controlla e monitora lo stato delle macchine in tutti gli ambienti di produzione.
+        </p>
+      </div>
+      <div class="header-actions">
+        <div class="current-environment" *ngIf="currentEnvironment$ | async as currentEnv">
+          <span class="env-label">Ambiente:</span>
+          <span class="env-value">{{ currentEnv }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Environment Selection -->
+  <app-environment-selector
+    (environmentChanged)="onEnvironmentChanged($event)">
+  </app-environment-selector>
+
+  <!-- Machine Actions -->
+  <app-machine-actions
+    [machines]="(machines$ | async) || []"
+    [environment]="(currentEnvironment$ | async) || 'production'"
+    [loading]="loading"
+    (refreshMachines)="onRefreshMachines()"
+    (toggleAllMachines)="onToggleAllMachines($event)"
+    (exportConfiguration)="onExportConfiguration()">
+  </app-machine-actions>
+
+  <!-- Machines Grid -->
+  <div class="machines-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="bi bi-list-ul"></i>
+        Elenco Macchine
+      </h2>
+      <div class="section-info" *ngIf="machines$ | async as machines">
+        <span class="machine-count">{{ machines.length }} macchine trovate</span>
+      </div>
+    </div>
+
+    <div class="machines-grid" *ngIf="machines$ | async as machines; else loadingState">
+      <app-machine-card
+        *ngFor="let machine of machines; trackBy: trackByMachineId"
+        [machine]="machine"
+        [environment]="(currentEnvironment$ | async) || 'production'"
+        [loading]="getMachineToggleState(machine.id)"
+        (toggle)="onMachineToggle($event)"
+        (viewDetails)="onMachineViewDetails($event)">
+      </app-machine-card>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="machines$ | async as machines; else loadingState">
+      <div class="empty-content" *ngIf="machines.length === 0">
+        <div class="empty-icon">
+          <i class="bi bi-gear"></i>
+        </div>
+        <h3 class="empty-title">Nessuna Macchina Trovata</h3>
+        <p class="empty-description">
+          Non sono state trovate macchine per l'ambiente selezionato.
+          Verifica la configurazione o prova a cambiare ambiente.
+        </p>
+        <button 
+          class="btn btn-primary"
+          (click)="onRefreshMachines()"
+          [disabled]="loading">
+          <i class="bi bi-arrow-clockwise"></i>
+          Ricarica
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <ng-template #loadingState>
+      <div class="loading-state" *ngIf="loading">
+        <div class="loading-content">
+          <div class="loading-spinner">
+            <div class="spinner"></div>
+          </div>
+          <h3 class="loading-title">Caricamento Macchine</h3>
+          <p class="loading-description">
+            Recupero delle informazioni sulle macchine in corso...
+          </p>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Global Loading Overlay -->
+  <div class="global-loading-overlay" *ngIf="loading">
+    <div class="global-loading-content">
+      <div class="global-spinner"></div>
+      <span class="global-loading-text">Elaborazione in corso...</span>
+    </div>
+  </div>
+</div>

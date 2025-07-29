@@ -1,0 +1,105 @@
+<!-- src/app/features/machines/components/machine-actions/machine-actions.component.html -->
+<div class="machine-actions">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">
+        <i class="bi bi-tools"></i>
+      </div>
+      <h3 class="card-title">Azioni Macchine</h3>
+      <div class="machine-stats">
+        <span class="stat-item">
+          <i class="bi bi-check-circle-fill text-success"></i>
+          {{ activeMachinesCount }}/{{ totalMachinesCount }} attive
+        </span>
+      </div>
+    </div>
+    
+    <div class="card-body">
+      <div class="actions-grid">
+        <!-- Refresh Actions -->
+        <div class="action-group">
+          <h4 class="action-group-title">
+            <i class="bi bi-arrow-clockwise"></i>
+            Aggiornamento
+          </h4>
+          <button 
+            class="btn btn-outline"
+            (click)="onRefresh()"
+            [disabled]="loading">
+            <i class="bi bi-arrow-clockwise"></i>
+            Aggiorna Stato
+          </button>
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="action-group">
+          <h4 class="action-group-title">
+            <i class="bi bi-toggles"></i>
+            Controllo Massivo
+          </h4>
+          <div class="bulk-actions">
+            <button 
+              class="btn btn-success"
+              [class.btn-outline]="allMachinesEnabled"
+              (click)="onToggleAll(true)"
+              [disabled]="loading || allMachinesEnabled">
+              <i class="bi bi-play-circle"></i>
+              Attiva Tutte
+            </button>
+            <button 
+              class="btn btn-danger"
+              [class.btn-outline]="allMachinesDisabled"
+              (click)="onToggleAll(false)"
+              [disabled]="loading || allMachinesDisabled">
+              <i class="bi bi-stop-circle"></i>
+              Disattiva Tutte
+            </button>
+          </div>
+        </div>
+
+        <!-- Configuration Actions -->
+        <div class="action-group">
+          <h4 class="action-group-title">
+            <i class="bi bi-gear"></i>
+            Configurazione
+          </h4>
+          <div class="config-actions">
+            <button 
+              class="btn btn-outline"
+              (click)="onExportConfiguration()"
+              [disabled]="loading">
+              <i class="bi bi-download"></i>
+              Esporta Config
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Environment Info -->
+      <div class="environment-info">
+        <div class="info-card">
+          <div class="info-header">
+            <i class="bi bi-info-circle"></i>
+            <span>Informazioni Ambiente</span>
+          </div>
+          <div class="info-content">
+            <div class="info-item">
+              <span class="info-label">Ambiente Corrente:</span>
+              <span class="info-value environment-badge">{{ environment }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Macchine Totali:</span>
+              <span class="info-value">{{ totalMachinesCount }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Macchine Attive:</span>
+              <span class="info-value" [class.text-success]="activeMachinesCount > 0">
+                {{ activeMachinesCount }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
