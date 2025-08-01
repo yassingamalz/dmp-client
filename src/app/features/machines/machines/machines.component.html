@@ -29,12 +29,68 @@
   <!-- Machine Actions -->
   <app-machine-actions
     [machines]="(machines$ | async) || []"
-    [environment]="(currentEnvironment$ | async) || 'production'"
+    [environment]="(currentEnvironment$ | async) || 'development'"
     [loading]="loading"
     (refreshMachines)="onRefreshMachines()"
     (toggleAllMachines)="onToggleAllMachines($event)"
-    (exportConfiguration)="onExportConfiguration()">
+    (exportConfiguration)="onExportConfiguration()"
+    (getStats)="onGetStats()">
   </app-machine-actions>
+
+  <!-- Machine Statistics (if available) -->
+  <div class="stats-section" *ngIf="stats$ | async as stats">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">
+          <i class="bi bi-bar-chart"></i>
+        </div>
+        <h3 class="card-title">Statistiche Macchine</h3>
+      </div>
+      <div class="card-body">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-icon total">
+              <i class="bi bi-gear"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ stats.totalMachines }}</span>
+              <span class="stat-label">Totali</span>
+            </div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-icon active">
+              <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ stats.activeMachines }}</span>
+              <span class="stat-label">Attive</span>
+            </div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-icon enabled">
+              <i class="bi bi-play-circle"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ stats.enabledMachines }}</span>
+              <span class="stat-label">Abilitate</span>
+            </div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-icon disabled">
+              <i class="bi bi-pause-circle"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ stats.disabledMachines }}</span>
+              <span class="stat-label">Disabilitate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Machines Grid -->
   <div class="machines-section">

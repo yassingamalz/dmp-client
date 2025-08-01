@@ -1,11 +1,11 @@
 <!-- src/app/features/machines/components/machine-card/machine-card.component.html -->
-<div class="machine-card" [class.loading]="loading" [class.inactive]="!machine.active">
+<div class="machine-card" [class.loading]="loading" [class.inactive]="!machine.annotationActive">
   <div class="machine-header">
     <div class="machine-info">
       <div class="machine-status-indicator" [style.background-color]="statusColor"></div>
       <div class="machine-details">
-        <h4 class="machine-name">{{ machine.label }}</h4>
-        <p class="machine-id">{{ machine.machine }}</p>
+        <h4 class="machine-name">{{ displayName }}</h4>
+        <p class="machine-id">{{ machine.machineName }}</p>
       </div>
     </div>
     
@@ -20,14 +20,14 @@
     <div class="machine-meta">
       <div class="meta-item">
         <i class="bi bi-folder"></i>
-        <span class="meta-label">Output:</span>
-        <span class="meta-value">{{ machine.output }}</span>
+        <span class="meta-label">Cartelle:</span>
+        <span class="meta-value">{{ folders }}</span>
       </div>
       
-      <div class="meta-item">
-        <i class="bi bi-file-earmark-text"></i>
-        <span class="meta-label">Estensioni:</span>
-        <span class="meta-value">{{ machine.enabledFileExtensions.join(', ') }}</span>
+      <div class="meta-item" *ngIf="machine.roots && machine.roots.length > 0">
+        <i class="bi bi-hdd"></i>
+        <span class="meta-label">Percorsi:</span>
+        <span class="meta-value">{{ roots }}</span>
       </div>
       
       <div class="meta-item">
@@ -35,34 +35,13 @@
         <span class="meta-label">Ultima modifica:</span>
         <span class="meta-value">{{ lastModifiedFormatted }}</span>
       </div>
-    </div>
 
-    <!-- Group Machine Details -->
-    <div class="group-machines" *ngIf="machine.listaMachine && machine.listaMachine.length > 0">
-      <button 
-        class="details-toggle" 
-        (click)="toggleDetails()"
-        [class.expanded]="showDetails">
-        <i class="bi bi-chevron-down"></i>
-        Macchine del gruppo ({{ machine.listaMachine!.length }})
-      </button>
-      
-      <div class="group-details" *ngIf="showDetails" [@slideInOut]>
-        <div 
-          class="group-machine-item" 
-          *ngFor="let groupMachine of machine.listaMachine"
-          [class.inactive]="!groupMachine.active">
-          <div class="group-machine-info">
-            <div class="group-status-indicator" [class.active]="groupMachine.active"></div>
-            <div class="group-machine-details">
-              <span class="group-machine-name">{{ groupMachine.label }}</span>
-              <span class="group-machine-id">{{ groupMachine.machina }}</span>
-            </div>
-          </div>
-          <div class="group-machine-extensions">
-            {{ groupMachine.enabledFileExtensions.join(', ') }}
-          </div>
-        </div>
+      <div class="meta-item">
+        <i class="bi bi-gear"></i>
+        <span class="meta-label">Stato macchina:</span>
+        <span class="meta-value" [class.text-success]="machine.overallActive" [class.text-muted]="!machine.overallActive">
+          {{ machine.overallActive ? 'Attiva' : 'Inattiva' }}
+        </span>
       </div>
     </div>
   </div>
@@ -78,15 +57,16 @@
       </button>
       
       <div class="toggle-control">
-        <label class="toggle-switch" [class.disabled]="!machine.active || loading">
+        <label class="toggle-switch" [class.disabled]="loading">
           <input 
             type="checkbox" 
             [checked]="machine.policyEnabled"
-            [disabled]="!machine.active || loading"
-            (change)="onToggle()">
+            [disabled]="loading"
+            (change)="onToggle()"
+            (click)="$event.stopPropagation()">
           <span class="toggle-slider">
             <span class="toggle-label">
-              {{ machine.policyEnabled ? 'Attiva' : 'Disattiva' }}
+              {{ machine.policyEnabled ? 'DISATTIVA' : 'ATTIVA' }}
             </span>
           </span>
         </label>
@@ -94,7 +74,6 @@
     </div>
   </div>
 
-  <!-- Loading Overlay -->
   <div class="loading-overlay" *ngIf="loading">
     <div class="spinner"></div>
     <span class="loading-text">Aggiornamento in corso...</span>

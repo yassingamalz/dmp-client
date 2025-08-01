@@ -1,4 +1,4 @@
-// src/app/shared/components/header/header.component.ts (UPDATED)
+// src/app/shared/components/header/header.component.ts
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -6,6 +6,10 @@ import { SettingsModalComponent } from '../settings-modal/settings-modal.compone
 import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
+/**
+ * Application header component with navigation and theme controls.
+ * Manages route navigation and provides access to application settings.
+ */
 @Component({
   selector: 'app-header',
   standalone: false,
@@ -33,10 +37,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Set initial route
     this.currentRoute = this.router.url;
     
-    // Listen for route changes to keep tab selection in sync
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -52,21 +54,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  /**
+   * Navigates to the specified route.
+   * @param route Target route path
+   */
   navigateTo(route: string): void {
     this.currentRoute = route;
-    // Navigate to all available routes including machines
     if (route === '/export' || route === '/files' || route === '/statistics' || route === '/machines') {
       this.router.navigate([route]);
     } else {
-      // Handle non-existing routes gracefully
       console.log(`Navigazione a ${route} - Route non ancora implementata`);
     }
   }
 
+  /**
+   * Toggles between light and dark theme.
+   */
   toggleTheme(): void {
     this.themeService.toggleTheme();
   }
 
+  /**
+   * Opens the application settings modal.
+   */
   openSettings(): void {
     this.settingsModal.openModal();
   }
