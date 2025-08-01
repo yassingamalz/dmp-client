@@ -5,6 +5,10 @@ import { EnvironmentInfo } from '../../../../core/models/machine-status';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+/**
+ * Environment selector component.
+ * Provides interface for switching between backend environments.
+ */
 @Component({
   selector: 'app-environment-selector',
   standalone: false,
@@ -16,7 +20,7 @@ export class EnvironmentSelectorComponent implements OnInit, OnDestroy {
 
   environments$: Observable<EnvironmentInfo[]>;
   currentEnvironment$: Observable<string>;
-  currentEnvironment = 'production'; // Store current value for action expressions
+  currentEnvironment = 'development';
   loading = false;
 
   private destroy$ = new Subject<void>();
@@ -27,7 +31,6 @@ export class EnvironmentSelectorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Subscribe to current environment changes
     this.currentEnvironment$
       .pipe(takeUntil(this.destroy$))
       .subscribe(env => {
@@ -40,6 +43,10 @@ export class EnvironmentSelectorComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  /**
+   * Handles environment selection change.
+   * @param environment Selected environment name
+   */
   onEnvironmentChange(environment: string): void {
     if (this.loading) return;
 
@@ -47,9 +54,19 @@ export class EnvironmentSelectorComponent implements OnInit, OnDestroy {
     this.machineService.setCurrentEnvironment(environment);
     this.environmentChanged.emit(environment);
 
-    // Reset loading state after a delay
     setTimeout(() => {
       this.loading = false;
     }, 600);
+  }
+
+  /**
+   * Gets base URL for environment display.
+   * @param environments Array of available environments
+   * @param envName Environment name to lookup
+   * @returns Base URL string for environment
+   */
+  getEnvironmentBaseUrl(environments: EnvironmentInfo[], envName: string): string {
+    const env = environments.find(e => e.name === envName);
+    return env?.baseUrl || '';
   }
 }
