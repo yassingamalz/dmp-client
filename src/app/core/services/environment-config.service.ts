@@ -18,7 +18,7 @@ export interface BackendEnvironment {
 export class EnvironmentConfigService {
   
   private environments: BackendEnvironment[] = [
-        {
+    {
       name: 'local',
       displayName: 'local',
       baseUrl: 'http://localhost:8080',
@@ -27,19 +27,19 @@ export class EnvironmentConfigService {
     {
       name: 'development',
       displayName: 'Sviluppo/Integrazione',
-      baseUrl: 'http://twxdev06:8081',
+      baseUrl: 'http://twxdev06.ges.ferlan.it:8080',
       color: '#198754'
     },
     {
       name: 'test',
       displayName: 'Test',
-      baseUrl: 'http://twxtest:8081',
+      baseUrl: 'http://twxtest.ges.ferlan.it:8080',
       color: '#fd7e14'
     },
     {
       name: 'production',
       displayName: 'Produzione',
-      baseUrl: 'http://f1-platform:8081',
+      baseUrl: 'http://f1-platform.ges.ferlan.it:8080',
       color: '#dc3545'
     }
   ];

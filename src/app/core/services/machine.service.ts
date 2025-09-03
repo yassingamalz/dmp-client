@@ -75,14 +75,10 @@ export class MachineService {
       this.currentEnvironmentSubject.next(environment);
     }
 
-    let params = new HttpParams();
-    if (environment) {
-      params = params.set('environment', environment);
-    }
-
+    // Remove the environment query parameter since it's determined by the base URL
     const apiUrl = this.envConfig.getApiUrl();
 
-    return this.http.get<ApiResponse<MachineStatusDto[]>>(apiUrl, { params })
+    return this.http.get<ApiResponse<MachineStatusDto[]>>(apiUrl)
       .pipe(
         map(response => {
           if (response.success) {
